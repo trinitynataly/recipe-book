@@ -1,0 +1,10 @@
+@use "../abstracts/index" as *;
+
+.sidebar-row {
+    .sidebar-item {
+        &:hover {        
+            color: #{$secondary-color} !important;
+            
+        }
+    }
+}

@@ -1,0 +1,17 @@
+[
+    {
+      "id": 1,
+      "title": "Classic Pancakes",
+      "description": "A delightful stack of fluffy pancakes perfect for any breakfast or brunch.",
+      "ingredients": ["1 cup all-purpose flour", "2 tablespoons sugar", "1 tablespoon baking powder", "1/2 teaspoon salt", "1 cup milk", "1 egg", "2 tablespoons vegetable oil"],
+      "steps": ["Mix all dry ingredients together.", "Add milk, egg, and oil, mixing until smooth.", "Pour on a hot griddle and cook until bubbles form, then flip."]
+    },
+    {
+      "id": 2,
+      "title": "Spaghetti Carbonara",
+      "description": "A quick and rich Italian pasta dish featuring eggs, cheese, pancetta, and pepper.",
+      "ingredients": ["400g spaghetti", "100g pancetta", "2 large eggs", "3/4 cup grated Parmesan", "Black pepper"],
+      "steps": ["Cook spaghetti.", "Fry pancetta until crispy.", "Mix eggs and Parmesan, and combine with pasta.", "Add pancetta, season with pepper."]
+    }
+  ]
+  

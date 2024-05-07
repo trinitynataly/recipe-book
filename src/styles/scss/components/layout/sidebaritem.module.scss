@@ -1,0 +1,17 @@
+.sidebarRow {
+    border: 1px solid blue;
+    
+    .sidebar-item {
+        border: 1px solid green;
+    }
+}
+
+.sidebarItem {
+    border: 1px solid green;
+}
+
+.iconStyle {
+    width: 18px;
+    height: 18px;
+    color: secondary-color;
+}

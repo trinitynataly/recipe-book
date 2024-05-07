@@ -4,14 +4,14 @@ import { Fragment } from "react";
 import Link from "next/link";
 import Layout from "@/components/layout/layout";
 
-const RecipeTypePage = () => {
+const MyFavouritesPage = () => {
   return (
     <Fragment>
       <Layout>
-        <div>Testing</div>
-      </Layout>
+        <div>MyFavourites</div>
+    </Layout>
     </Fragment>
   )
 }
 
-export default RecipeTypePage;
+export default MyFavouritesPage;
