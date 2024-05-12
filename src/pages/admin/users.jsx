@@ -6,10 +6,10 @@ const Home = () => {
   return (
     <Fragment>
       <Layout>
-        <h1>Home</h1>
+        <h1>Users</h1>
       </Layout>
     </Fragment>
   );
 }
 
-export default withAuth(Home, { isAdminRequired: false });
+export default withAuth(Home, { isAdminRequired: true });

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { LuMenuSquare } from 'react-icons/lu';
 import Image from 'next/image';
+import Link from 'next/link';
+import Logo from '../../../public/recipe_book_logo.svg';
 
 function Sidebar({ children }) {
   const [isMobile, setIsMobile] = useState(false);
@@ -32,7 +34,9 @@ function Sidebar({ children }) {
     <aside id="sidebar" className={`bg-primary text-white relative ${isMobile ? 'h-16 w-screen' : 'w-80 h-screen'}`}>
       <nav className={`${isMobile ? 'flex-row justify-between items-center' : 'flex-col h-full justify-between items-center'}`}>
         <div className="p-4 pb-2 flex justify-between items-center">
-          <Image src="/recipe_book_logo.svg" alt="Recipe Book Logo" width={150} height={50} className="w-48" id="sidebar-logo"/>
+          <Link href="/" passHref>
+            <Logo className="w-48" />
+          </Link>
           <button onClick={toggleSidebar} className={`z-20 ${isMobile ? '' : 'hidden'}`}>
             <LuMenuSquare style={{ fontSize: '2em' }} />
           </button>
