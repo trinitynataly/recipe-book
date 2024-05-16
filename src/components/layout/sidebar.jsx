@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { LuMenuSquare } from 'react-icons/lu';
-import Image from 'next/image';
 import Link from 'next/link';
+import { LuMenuSquare } from 'react-icons/lu';
 import Logo from '../../../public/recipe_book_logo.svg';
+import SidebarItem from './sidebaritem';
 
-function Sidebar({ children }) {
+function Sidebar({ items }) {
   const [isMobile, setIsMobile] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -42,7 +42,15 @@ function Sidebar({ children }) {
           </button>
         </div>
         <ul className={`bg-primary flex-1 px-3 ${isMobile ? (menuVisible ? 'block' : 'hidden') : 'block'}`}>
-          {children}
+          {items.map((item, index) => (
+            <SidebarItem
+              key={index}
+              icon={item.icon}
+              text={item.text}
+              href={item.href}
+              submenu={item.submenu}
+            />
+          ))}
         </ul>
       </nav>
     </aside>

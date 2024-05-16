@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import jwt from 'jsonwebtoken'; // Properly import jwt to use its decoding functionality
+import { decodeToken } from '../lib/auth'; // Import the decodeToken function
 
 const withAuth = (WrappedComponent, { isAdminRequired = false } = {}) => {
   function WithAuthComponent(props) {
@@ -13,12 +13,14 @@ const withAuth = (WrappedComponent, { isAdminRequired = false } = {}) => {
 
     useEffect(() => {
       if (!isClient) return;  // Only run the following code on the client
-
-      const token = localStorage.getItem('token');
-      const user = token ? jwt.decode(token) : null; // Use jwt to decode the token
-
-      if (!token) {
-        router.replace('/login'); // Redirect to login if no token
+      const token = localStorage.getItem('access_token');
+      const decodedToken = decodeToken(token);
+      if (!decodedToken) {
+        router.replace('/login');
+      }
+      const { user, tokenType } = decodedToken;
+      if (!user || tokenType !== 'access_token') {
+        router.replace('/login'); // Redirect to login if no user
       } else if (isAdminRequired && !user.isAdmin) {
         router.replace('/'); // Redirect to home if not admin
       }

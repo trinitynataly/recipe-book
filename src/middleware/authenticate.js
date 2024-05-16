@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '../lib/auth';
 
 const authenticate = (req, res, next) => {
     const tokenHeader = req.headers.authorization;
@@ -13,13 +13,17 @@ const authenticate = (req, res, next) => {
 
     const token = parts[1];
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (error) {
+    const decodedToken = verifyToken(token);
+    if (!decodedToken) {
         return res.status(403).json({ success: false, message: 'Invalid token' });
     }
+
+    const { user: decodedUser, tokenType } = decodedToken;
+    if (!decodedUser || tokenType !== 'access_token') {
+        return res.status(403).json({ success: false, message: 'Invalid token' });
+    }
+    req.user = decodedUser;
+    next();
 };
 
 export default authenticate;

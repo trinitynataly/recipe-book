@@ -5,7 +5,8 @@ export default function Logout() {
     const router = useRouter();
 
     useEffect(() => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         router.replace('/login');
     }, [router]);
 

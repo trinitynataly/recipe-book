@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Logo from '../../public/recipe_book_logo.svg';
@@ -8,6 +8,12 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');  // State to hold error message
   const router = useRouter();  // Next.js router to handle redirection
+
+  useEffect(() => {
+    // Set state with autofilled values when component mounts
+    setEmail(document.getElementById('email-address').value);
+    setPassword(document.getElementById('password').value);
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,7 +27,6 @@ export default function Login() {
         },
         body: JSON.stringify({ email, password })
       });
-
       const data = await response.json();
 
       if (!response.ok) {
@@ -29,7 +34,8 @@ export default function Login() {
       }
 
       // Assuming the response includes a token you need to store
-      localStorage.setItem('token', data.token);  // Store the token in localStorage
+      localStorage.setItem('access_token', data.access_token);  // Store the token in localStorage
+      localStorage.setItem('refresh_token', data.refresh_token);  // Store the refresh token in localStorage
 
       // Redirect to the homepage after successful login
       router.push('/');
@@ -87,6 +93,13 @@ export default function Login() {
             </button>
           </div>
         </form>
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            <Link href="/register" passHref className="text-indigo-600 hover:text-indigo-500">
+              Don&apos;t have an account? Click here!
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
