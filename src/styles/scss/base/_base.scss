@@ -11,6 +11,7 @@
   --background-end-rgb: 255, 255, 255;
   --primary-color: #{$primary-color};
   --secondary-color: #{$secondary-color};
+  --tertiary-color: #{$tertiary-color};
 }
 
 @media (prefers-color-scheme: dark) {

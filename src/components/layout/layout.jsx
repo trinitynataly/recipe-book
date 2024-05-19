@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import Sidebar from "./sidebar";
+import TopBar from "./topbar";
 import getUser from "../../lib/getUser";
 import BreakfastIcon from '../../../public/icons/brekfast.svg';
 import LunchIcon from '../../../public/icons/lunch.svg';
@@ -12,7 +14,17 @@ import AdminIcon from '../../../public/icons/admin.svg';
 import ExitIcon from '../../../public/icons/exit.svg';
 
 function Layout({ children }) {
-    const user = getUser();
+    const [user, setUser] = useState(null);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        setUser(getUser());
+    }, []);
+
+    const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode);
+        document.documentElement.classList.toggle('dark');
+    };
 
     const menuItems = [
         {
@@ -39,12 +51,20 @@ function Layout({ children }) {
         { text: "Sign Out", href: "/logout", icon: <ExitIcon /> },
     ].filter(Boolean); // Filter out null items
 
+    const handleSearch = (query) => {
+        // Implement search functionality here
+        console.log("Searching for:", query);
+    };
+
     return (
-        <div className="flex flex-col md:flex-row min-h-screen">
+        <div className={`flex flex-col md:flex-row min-h-screen ${isDarkMode ? 'dark' : ''}`}>
             <Sidebar items={menuItems} />
-            <main className="flex-1 overflow-auto p-4">
-                {children}
-            </main>
+            <div className="flex-1 flex flex-col">
+                <TopBar onSearch={handleSearch} onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+                <main className="flex-1 overflow-auto p-4">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

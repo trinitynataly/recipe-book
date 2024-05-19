@@ -17,12 +17,13 @@ const withAuth = (WrappedComponent, { isAdminRequired = false } = {}) => {
       const decodedToken = decodeToken(token);
       if (!decodedToken) {
         router.replace('/login');
-      }
-      const { user, tokenType } = decodedToken;
-      if (!user || tokenType !== 'access_token') {
-        router.replace('/login'); // Redirect to login if no user
-      } else if (isAdminRequired && !user.isAdmin) {
-        router.replace('/'); // Redirect to home if not admin
+      } else {
+        const { user, tokenType } = decodedToken;
+        if (!user || tokenType !== 'access_token') {
+          router.replace('/login'); // Redirect to login if no user
+        } else if (isAdminRequired && !user.isAdmin) {
+          router.replace('/'); // Redirect to home if not admin
+        }
       }
     }, [isClient, router]);
 

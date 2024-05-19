@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class', // Enable class-based dark mode
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -15,6 +16,7 @@ module.exports = {
       colors: {
         primary: 'var(--primary-color)',
         secondary: 'var(--secondary-color)',
+        tertiary: 'var(--tertiary-color)',
       }
     },
   },
