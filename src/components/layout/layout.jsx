@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import Sidebar from "./sidebar";
-import TopBar from "./topbar";
-import getUser from "../../lib/getUser";
+import Sidebar from './sidebar';
+import TopBar from './topbar';
+import getUser from '../../lib/getUser';
 import BreakfastIcon from '../../../public/icons/brekfast.svg';
 import LunchIcon from '../../../public/icons/lunch.svg';
 import DinnerIcon from '../../../public/icons/dinner.svg';
@@ -16,52 +16,84 @@ import ExitIcon from '../../../public/icons/exit.svg';
 function Layout({ children }) {
     const [user, setUser] = useState(null);
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 640) {
+                setIsMobile(true);
+            } else {
+                setIsMobile(false);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
 
     useEffect(() => {
         setUser(getUser());
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            setIsDarkMode(true);
+            document.documentElement.classList.add('dark');
+        } else {
+            setIsDarkMode(false);
+            document.documentElement.classList.remove('dark');
+        }
     }, []);
 
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
-        document.documentElement.classList.toggle('dark');
+        if (isDarkMode) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
     };
 
     const menuItems = [
         {
-            text: "All Recipes",
+            text: 'All Recipes',
             icon: <DashboardIcon />,
             submenu: [
-                { text: "Breakfast", href: "/recipes/breakfast", icon: <BreakfastIcon /> },
-                { text: "Lunch", href: "/recipes/lunch", icon: <LunchIcon /> },
-                { text: "Dinner", href: "/recipes/dinner", icon: <DinnerIcon /> },
-                { text: "Snacks", href: "/recipes/snacks", icon: <SnacksIcon /> },
-            ]
+                { text: 'Breakfast', href: '/recipes/breakfast', icon: <BreakfastIcon /> },
+                { text: 'Lunch', href: '/recipes/lunch', icon: <LunchIcon /> },
+                { text: 'Dinner', href: '/recipes/dinner', icon: <DinnerIcon /> },
+                { text: 'Snacks', href: '/recipes/snacks', icon: <SnacksIcon /> },
+            ],
         },
-        { text: "My Favourites", href: "/myfavourites", icon: <HeartIcon /> },
-        { text: "Blog", href: "./blog", icon: <BookIcon /> },
-        { text: "About", href: "/about", icon: <InfoIcon /> },
-        user && user.isAdmin ? {
-            text: "Admin",
-            icon: <AdminIcon />,
-            submenu: [
-                { text: "Users", href: "/admin/users", icon: <AdminIcon /> },
-                { text: "Recipes", href: "/admin/recipes", icon: <AdminIcon /> },
-            ]
-        } : null,
-        { text: "Sign Out", href: "/logout", icon: <ExitIcon /> },
+        { text: 'My Favourites', href: '/myfavourites', icon: <HeartIcon /> },
+        { text: 'Blog', href: './blog', icon: <BookIcon /> },
+        { text: 'About', href: '/about', icon: <InfoIcon /> },
+        user && user.isAdmin
+            ? {
+                  text: 'Admin',
+                  icon: <AdminIcon />,
+                  submenu: [
+                      { text: 'Users', href: '/admin/users', icon: <AdminIcon /> },
+                      { text: 'Recipes', href: '/admin/recipes', icon: <AdminIcon /> },
+                  ],
+              }
+            : null,
+        { text: 'Sign Out', href: '/logout', icon: <ExitIcon /> },
     ].filter(Boolean); // Filter out null items
 
     const handleSearch = (query) => {
         // Implement search functionality here
-        console.log("Searching for:", query);
+        console.log('Searching for:', query);
     };
 
     return (
-        <div className={`flex flex-col md:flex-row min-h-screen ${isDarkMode ? 'dark' : ''}`}>
-            <Sidebar items={menuItems} />
-            <div className="flex-1 flex flex-col">
+        <div className={`flex  min-h-screen ${isMobile ? 'flex-col':'flex-row'}`}>
+            <Sidebar items={menuItems} isMobile={isMobile} />
+            <div className={`flex-1 flex flex-col ${isMobile ? '':'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
                 <TopBar onSearch={handleSearch} onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-                <main className="flex-1 overflow-auto p-4">
+                <main className="flex-1 overflow-auto p-4 bg-backgroundEnd dark:bg-darkBackgroundEnd text-foreground dark:text-foreground">
                     {children}
                 </main>
             </div>

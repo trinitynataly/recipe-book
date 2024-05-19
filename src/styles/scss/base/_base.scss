@@ -4,31 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-  --primary-color: #{$primary-color};
-  --secondary-color: #{$secondary-color};
-  --tertiary-color: #{$tertiary-color};
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --foreground-rgb: #{$light-foreground};
+  --background-start-rgb: #{$light-background-start};
+  --background-end-rgb: #{$light-background-end};
+  --primary-color: #{$light-primary-color};
+  --secondary-color: #{$light-secondary-color};
+  --tertiary-color: #{$light-tertiary-color};
+  --sidebar-bg: #{$light-sidebar-bg};
+  --sidebar-text: #{$light-sidebar-text};
+  --dark-foreground-rgb: #{$dark-foreground};
+  --dark-background-start-rgb: #{$dark-background-start};
+  --dark-background-end-rgb: #{$dark-background-end};
+  --dark-primary-color: #{$dark-primary-color};
+  --dark-secondary-color: #{$dark-secondary-color};
+  --dark-tertiary-color: #{$dark-tertiary-color};
+  --dark-sidebar-bg: #{$dark-sidebar-bg};
+  --dark-sidebar-text: #{$dark-sidebar-text};
 }
 
 body {
-  background-color: $white;  
+  background-color: var(--background-end-rgb);
   font-family: $font-family;
   font-size: $font-size;
   line-height: $line-height;
+  color: var(--foreground-rgb);
 }
-
 
 @layer utilities {
   .text-balance {
@@ -37,6 +38,6 @@ body {
 }
 
 a {
-    color: inherit;
-    text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }

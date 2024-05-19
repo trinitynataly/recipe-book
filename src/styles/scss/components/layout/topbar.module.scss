@@ -1,3 +1,23 @@
-.topbarItems {
-    justify-content: space-between;
-}
+@keyframes sparkle {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+  }
+  
+  .sparkle {
+    animation: sparkle 1s infinite alternate;
+  }
+  
+  .sparkleSun {
+    color: #FFD700; /* Gold color for sun */
+  }
+  
+  .sparkleMoon {
+    color: #505050; /* Light Steel Blue color for moon */
+  }
+  
