@@ -1,28 +1,31 @@
-import { verifyToken } from '../lib/auth';
+import { verifyToken } from '@/lib/auth';
+import cookie from 'cookie';
 
 const authenticate = (req, res, next) => {
-    const tokenHeader = req.headers.authorization;
-    if (!tokenHeader) {
-        return res.status(401).json({ success: false, message: 'Authentication required' });
+    const cookies = req.headers.cookie;
+    let token = null;
+
+    if (cookies) {
+        const parsedCookies = cookie.parse(cookies);
+        token = parsedCookies.access_token;
     }
 
-    const parts = tokenHeader.split(' ');
-    if (parts.length !== 2 || parts[0] !== 'Bearer') {
-        return res.status(401).json({ success: false, message: 'Token format invalid' });
+    if (!token && req.headers.authorization) {
+        const parts = req.headers.authorization.split(' ');
+        if (parts.length === 2 && parts[0] === 'Bearer') {
+            token = parts[1];
+        }
     }
 
-    const token = parts[1];
-
-    const decodedToken = verifyToken(token);
-    if (!decodedToken) {
-        return res.status(403).json({ success: false, message: 'Invalid token' });
+    if (token) {
+        const decodedToken = verifyToken(token);
+        if (decodedToken) {
+            const { user: decodedUser, tokenType } = decodedToken;
+            if (decodedUser && tokenType === 'access_token') {
+                req.user = decodedUser;
+            }
+        }
     }
-
-    const { user: decodedUser, tokenType } = decodedToken;
-    if (!decodedUser || tokenType !== 'access_token') {
-        return res.status(403).json({ success: false, message: 'Invalid token' });
-    }
-    req.user = decodedUser;
     next();
 };
 

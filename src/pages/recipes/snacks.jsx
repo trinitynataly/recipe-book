@@ -4,18 +4,19 @@ import Layout from "@/components/layout/layout";
 import RecipeTable from "@/components/recipes/RecipeTable";
 import apiRequest from '@/lib/apiRequest';
 
-const Home = ({ recipes, pagination }) => {
+const Snacks = ({ recipes, pagination }) => {
   const { currentPage, totalPages } = pagination;
+
   return (
     <Fragment>
       <Head>
-        <title>Welcome | Recipe Book</title>
-        <meta name="description" content="Welcome to Recipe Book App" />
+        <title>Snacks Recipes | Recipe Book</title>
+        <meta name="description" content="Snacks Recipes" />
       </Head>
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <RecipeTable
-            title="Recipe Book"
+            title="Snacks Recipes"
             recipes={recipes}
             page={currentPage}
             totalPages={totalPages}
@@ -32,13 +33,13 @@ export const getServerSideProps = async (context) => {
   let pagination = {};
 
   try {
-    const response = await apiRequest(`recipes?page=${page}`, 'GET', null, context); // Pass context here
+    const response = await apiRequest(`recipes?type=snacks&page=${page}`, 'GET', null, context);
     if (response.success) {
       recipes = response.data;
       pagination = response.pagination;
     }
   } catch (error) {
-    console.error('Error fetching recipes:', error);
+    console.error('Error fetching snacks recipes:', error);
   }
 
   return {
@@ -49,4 +50,4 @@ export const getServerSideProps = async (context) => {
   };
 };
 
-export default Home;
+export default Snacks;

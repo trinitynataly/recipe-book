@@ -1,8 +1,9 @@
-import dbConnect from '../../../lib/mongodb';
-import Recipe from '../../../models/Recipe';
-import Tag from '../../../models/Tag';
-import authenticate from '../../../middleware/authenticate';
-import { validateRecipeCreation } from '../../../validators/RecipeValidators';
+import dbConnect from '@/lib/mongodb';
+import Recipe from '@/models/Recipe';
+import Tag from '@/models/Tag';
+import Favorite from '@/models/Favorite';
+import authenticate from '@/middleware/authenticate';
+import { validateRecipeCreation } from '@/validators/RecipeValidators';
 
 export default async function handler(req, res) {
     await dbConnect();
@@ -11,13 +12,13 @@ export default async function handler(req, res) {
         if (req.method === 'GET') {
             // Fetch all recipes
             try {
-                const { type, tag, favorite, page = 1, per_page = 20 } = req.query;
-                // Initialize query
+                const { type, tag, favorite, page = 1, per_page = 12 } = req.query;
+                const userId = req.user ? req.user._id : null;  // Check if user is logged in
                 let query = {};
 
                 // Filter by type
                 if (type) {
-                    query.type = type;
+                    query.type = { $regex: new RegExp(`^${type}$`, 'i') };
                 }
 
                 // Filter by tag
@@ -28,11 +29,17 @@ export default async function handler(req, res) {
                     }
                 }
 
-                // Filter by favorite
-                if (favorite) {
-                    const favoriteDocs = await Favorite.find({ userID: req.user._id }).select('recipeID');
-                    const favoriteRecipeIds = favoriteDocs.map(fav => fav.recipeID);
-                    query._id = { $in: favoriteRecipeIds };
+                let userFavoriteRecipeIds = [];
+
+                if (userId) {
+                    // Fetch the user's favorite recipes if user is logged in
+                    const userFavorites = await Favorite.find({ userID: userId }).select('recipeID');
+                    userFavoriteRecipeIds = userFavorites.map(fav => fav.recipeID.toString());
+
+                    // Filter by favorite if needed
+                    if (favorite) {
+                        query._id = { $in: userFavoriteRecipeIds };
+                    }
                 }
 
                 // Pagination
@@ -50,9 +57,20 @@ export default async function handler(req, res) {
                 const totalRecipes = await Recipe.countDocuments(query);
                 const totalPages = Math.ceil(totalRecipes / perPageInt);
 
+                // Add favorite field to each recipe if user is logged in
+                const recipesWithFavorite = recipes.map(recipe => {
+                    const recipeObject = recipe.toObject();
+                    if (userId) {
+                        recipeObject.favorite = userFavoriteRecipeIds.includes(recipeObject._id.toString());
+                    } else {
+                        recipeObject.favorite = false;  // No favorite field if no user
+                    }
+                    return recipeObject;
+                });
+
                 res.status(200).json({
                     success: true,
-                    data: recipes,
+                    data: recipesWithFavorite,
                     pagination: {
                         totalRecipes,
                         totalPages,
@@ -65,6 +83,9 @@ export default async function handler(req, res) {
             }
         } else if (req.method === 'POST') {
             // Validate and create a new recipe
+            if (!req.user) {
+                return res.status(401).json({ success: false, message: 'Unauthorized' });
+            }
             validateRecipeCreation(req, res, async () => {
                 const { title, description, ingredients, cook_time, instructions, tags, type } = req.body;
                 try {

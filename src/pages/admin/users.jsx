@@ -1,8 +1,7 @@
 import { Fragment } from "react";
-import withAuth from "@/middleware/withAuth";
 import Layout from "@/components/layout/layout";
 
-const Home = () => {
+const Users = () => {
   return (
     <Fragment>
       <Layout>
@@ -12,4 +11,4 @@ const Home = () => {
   );
 }
 
-export default withAuth(Home, { isAdminRequired: true });
+export default Users;

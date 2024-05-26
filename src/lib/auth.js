@@ -1,5 +1,7 @@
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import cookie from 'cookie';
+
 
 const hashPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -12,40 +14,32 @@ const verifyPassword = async (password, hash) => {
 
 const verifyToken = (token) => {
     try {
-        // Decode the token to read its payload and determine the token type
         const decoded = jwt.decode(token);
 
-        if (!decoded || !decoded.tokenType) {
-            throw new Error('Invalid token');
+        if (decoded && decoded.tokenType) {
+            const secret = decoded.tokenType === 'access_token'
+                ? process.env.JWT_SECRET
+                : process.env.JWT_REFRESH_SECRET;
+
+            const verified = jwt.verify(token, secret);
+            return verified;
+        } else {
+            return false;
         }
-
-        const secret = decoded.tokenType === 'access_token'
-            ? process.env.JWT_SECRET
-            : process.env.JWT_REFRESH_SECRET;
-
-        // Verify the token using the appropriate secret
-        const verified = jwt.verify(token, secret);
-        return verified;
     } catch (err) {
         return false;
     }
 };
 
 const decodeToken = (token) => {
-    return jwt.decode(token); // jwt.decode does not throw errors, so no try-catch needed
+    return jwt.decode(token);
 };
 
 const generateTokens = (user) => {
     const accessToken = jwt.sign(
         { 
             tokenType: "access_token", 
-            user: { 
-                _id: user._id, 
-                isAdmin: user.isAdmin, 
-                email: user.email, 
-                firstName: user.firstName, 
-                lastName: user.lastName
-            }
+            user: { _id: user._id }
         },
         process.env.JWT_SECRET,
         { expiresIn: '10m' }
@@ -55,10 +49,31 @@ const generateTokens = (user) => {
             tokenType: "refresh_token", 
             user: { _id: user._id }
         },
-        process.env.JWT_REFRESH_SECRET, // Use JWT_REFRESH_SECRET for refresh token
+        process.env.JWT_REFRESH_SECRET,
         { expiresIn: '30d' }
     );
     return { access_token: accessToken, refresh_token: refreshToken };
 };
 
-export { hashPassword, verifyPassword, verifyToken, decodeToken, generateTokens };
+const setCookies = (res, access_token='', refresh_token='') => {
+    const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+        sameSite: 'Strict',
+        path: '/',
+    };
+
+    if (!access_token) {
+        res.setHeader('Set-Cookie', [
+            cookie.serialize('access_token', '', { ...cookieOptions, maxAge: 0 }),
+            cookie.serialize('refresh_token', '', { ...cookieOptions, maxAge: 0 }),
+        ]);
+    } else {
+        res.setHeader('Set-Cookie', [
+            cookie.serialize('access_token', access_token, { ...cookieOptions, maxAge: 60 * 10 }), // 10 minutes
+            cookie.serialize('refresh_token', refresh_token, { ...cookieOptions, maxAge: 60 * 60 * 24 * 30 }), // 30 days
+        ]);
+    }
+};
+
+export { hashPassword, verifyPassword, verifyToken, decodeToken, generateTokens, setCookies };

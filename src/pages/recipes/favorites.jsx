@@ -4,18 +4,20 @@ import Layout from "@/components/layout/layout";
 import RecipeTable from "@/components/recipes/RecipeTable";
 import apiRequest from '@/lib/apiRequest';
 
-const Home = ({ recipes, pagination }) => {
+const Favorites = ({ recipes, pagination }) => {
+  
   const { currentPage, totalPages } = pagination;
+
   return (
     <Fragment>
       <Head>
-        <title>Welcome | Recipe Book</title>
-        <meta name="description" content="Welcome to Recipe Book App" />
+        <title>My Favourite Recipes | Recipe Book</title>
+        <meta name="description" content="My Favourite Recipes" />
       </Head>
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <RecipeTable
-            title="Recipe Book"
+            title="My Favourite Recipes"
             recipes={recipes}
             page={currentPage}
             totalPages={totalPages}
@@ -27,18 +29,22 @@ const Home = ({ recipes, pagination }) => {
 };
 
 export const getServerSideProps = async (context) => {
-  const page = parseInt(context.query.page) || 1;
+const { req, res, query } = context;
+  const page = parseInt(query.page) || 1;
   let recipes = [];
-  let pagination = {};
+  let pagination = {
+    currentPage: 1,
+    totalPages: 1,
+  };
 
   try {
-    const response = await apiRequest(`recipes?page=${page}`, 'GET', null, context); // Pass context here
+    const response = await apiRequest(`recipes/favorites?page=${page}`, 'GET', null, context);
     if (response.success) {
       recipes = response.data;
       pagination = response.pagination;
     }
   } catch (error) {
-    console.error('Error fetching recipes:', error);
+    console.error('Error fetching favorite recipes:', error);
   }
 
   return {
@@ -49,4 +55,4 @@ export const getServerSideProps = async (context) => {
   };
 };
 
-export default Home;
+export default Favorites;

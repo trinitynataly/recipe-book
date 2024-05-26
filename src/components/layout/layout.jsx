@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
-import getUser from '../../lib/getUser';
+import { useUser } from '@/context/UserContext';
 import BreakfastIcon from '../../../public/icons/brekfast.svg';
 import LunchIcon from '../../../public/icons/lunch.svg';
 import DinnerIcon from '../../../public/icons/dinner.svg';
 import SnacksIcon from '../../../public/icons/snacks.svg';
-import DashboardIcon from '../../../public/dashboard.svg';
+import DashboardIcon from '../../../public/icons/dashboard.svg';
 import BookIcon from '../../../public/icons/book.svg';
 import HeartIcon from '../../../public/icons/heart.svg';
 import InfoIcon from '../../../public/icons/info.svg';
@@ -14,7 +14,7 @@ import AdminIcon from '../../../public/icons/admin.svg';
 import ExitIcon from '../../../public/icons/exit.svg';
 
 function Layout({ children }) {
-    const [user, setUser] = useState(null);
+    const { user } = useUser();
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
@@ -32,9 +32,7 @@ function Layout({ children }) {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-
     useEffect(() => {
-        setUser(getUser());
         const theme = localStorage.getItem('theme');
         if (theme === 'dark') {
             setIsDarkMode(true);
@@ -67,20 +65,18 @@ function Layout({ children }) {
                 { text: 'Snacks', href: '/recipes/snacks', icon: <SnacksIcon /> },
             ],
         },
-        { text: 'My Favourites', href: '/myfavourites', icon: <HeartIcon /> },
+        user && { text: 'My Favourites', href: '/recipes/favorites', icon: <HeartIcon /> },
         { text: 'Blog', href: './blog', icon: <BookIcon /> },
         { text: 'About', href: '/about', icon: <InfoIcon /> },
-        user && user.isAdmin
-            ? {
-                  text: 'Admin',
-                  icon: <AdminIcon />,
-                  submenu: [
-                      { text: 'Users', href: '/admin/users', icon: <AdminIcon /> },
-                      { text: 'Recipes', href: '/admin/recipes', icon: <AdminIcon /> },
-                  ],
-              }
-            : null,
-        { text: 'Sign Out', href: '/logout', icon: <ExitIcon /> },
+        user && user.isAdmin && {
+            text: 'Admin',
+            icon: <AdminIcon />,
+            submenu: [
+                { text: 'Users', href: '/admin/users', icon: <AdminIcon /> },
+                { text: 'Recipes', href: '/admin/recipes', icon: <AdminIcon /> },
+            ],
+        },
+        user && { text: 'Sign Out', href: '/logout', icon: <ExitIcon /> },
     ].filter(Boolean); // Filter out null items
 
     const handleSearch = (query) => {
@@ -89,9 +85,9 @@ function Layout({ children }) {
     };
 
     return (
-        <div className={`flex  min-h-screen ${isMobile ? 'flex-col':'flex-row'}`}>
+        <div className={`flex min-h-screen ${isMobile ? 'flex-col' : 'flex-row'}`}>
             <Sidebar items={menuItems} isMobile={isMobile} />
-            <div className={`flex-1 flex flex-col ${isMobile ? '':'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
+            <div className={`flex-1 flex flex-col ${isMobile ? '' : 'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
                 <TopBar onSearch={handleSearch} onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
                 <main className="flex-1 overflow-auto p-4 bg-backgroundEnd dark:bg-darkBackgroundEnd text-foreground dark:text-foreground">
                     {children}

@@ -1,7 +1,7 @@
-import dbConnect from '../../../lib/mongodb';
-import User from '../../../models/User';
-import authenticate from '../../../middleware/authenticate';
-import { validateUserUpdate } from '../../../validators/UserValidators';
+import dbConnect from '@/lib/mongodb';
+import User from '@/models/User';
+import authenticate from '@/middleware/authenticate';
+import { validateUserUpdate } from '@/validators/UserValidators';
 
 export default async function handler(req, res) {
     await dbConnect();

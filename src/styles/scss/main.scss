@@ -1,3 +1,8 @@
 @use "abstracts/index" as *;
 @use "base/base";
 @use "base/sidebar";
+
+.quill {
+    display: flex;
+    flex-direction: column;
+}

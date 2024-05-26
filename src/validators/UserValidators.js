@@ -1,4 +1,4 @@
-import User from '../models/User';
+import User from '@/models/User';
 
 import Joi from 'joi';
 
@@ -19,7 +19,7 @@ const loginSchema = Joi.object({
 const validateLogin = (req, res, next) => {
     const { error } = loginSchema.validate(req.body);
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+        return res.status(400).json({ success: false, message: error.details[0].message });
     }
     next();
 }

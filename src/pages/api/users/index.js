@@ -1,7 +1,7 @@
-import dbConnect from '../../../lib/mongodb';
-import User from '../../../models/User';
-import authenticate from '../../../middleware/authenticate';
-import { validateUserCreation } from '../../../validators/UserValidators';
+import dbConnect from '@/lib/mongodb';
+import User from '@/models/User';
+import authenticate from '@/middleware/authenticate';
+import { validateUserCreation } from '@/validators/UserValidators';
 
 export default async function handler(req, res) {
     await dbConnect();
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         } else if (req.method === 'POST') {
             // Only allow admins to create new users
             if (!req.user.isAdmin) {
-                return res.status(403).json({ message: 'Unauthorized: Only admins can create users.' });
+                return res.status(403).json({ success: false, message: 'Unauthorized: Only admins can create users.' });
             }
             
             validateUserCreation(req, res, async () => {

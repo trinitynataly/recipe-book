@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import Recipe from '../models/Recipe';
+import Recipe from '@/models/Recipe';
 
 // Schema for creating a new recipe
 const recipeCreationSchema = Joi.object({

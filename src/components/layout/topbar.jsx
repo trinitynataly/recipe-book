@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
+import { useUser } from '@/context/UserContext';
 import styles from '../../styles/scss/components/layout/topbar.module.scss';
 
-const TopBar = ({ onSearch, onToggleTheme, isDarkMode }) => {
+const TopBar = ({ onToggleTheme, isDarkMode }) => {
     const [searchQuery, setSearchQuery] = useState('');
+    const { user } = useUser();
+    const router = useRouter();
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
@@ -12,7 +16,7 @@ const TopBar = ({ onSearch, onToggleTheme, isDarkMode }) => {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        onSearch(searchQuery);
+        router.push(`/recipes/search?keyword=${encodeURIComponent(searchQuery)}`);
     };
 
     return (
@@ -30,7 +34,15 @@ const TopBar = ({ onSearch, onToggleTheme, isDarkMode }) => {
                 </button>
             </form>
             <div className="flex items-center">
-                <Link href="/recipes/new" className="ml-4 bg-primary hover:bg-tertiary text-white px-4 py-2 rounded">+ New Recipe</Link>
+                {user ? (
+                    <Link href="/recipes/new" className="ml-4 bg-primary hover:bg-tertiary text-white px-4 py-2 rounded">
+                        + New Recipe
+                    </Link>
+                ) : (
+                    <Link href="/login" className="ml-4 bg-primary hover:bg-tertiary text-white px-4 py-2 rounded">
+                        Sign In
+                    </Link>
+                )}
                 <button
                     onClick={onToggleTheme}
                     className="ml-4 p-2 rounded-full bg-gray-300 dark:bg-gray-800"

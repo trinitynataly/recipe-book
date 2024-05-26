@@ -1,7 +1,9 @@
-import dbConnect from '../../../../lib/mongodb';
-import Recipe from '../../../../models/Recipe';
-import authenticate from '../../../../middleware/authenticate';
-import { validateRecipeUpdate } from '../../../../validators/RecipeValidators';
+import dbConnect from '@/lib/mongodb';
+import Recipe from '@/models/Recipe';
+import Tag from '@/models/Tag';
+import Favorite from '@/models/Favorite';
+import authenticate from '@/middleware/authenticate';
+import { validateRecipeUpdate } from '@/validators/RecipeValidators';
 
 export default async function handler(req, res) {
     await dbConnect();
@@ -18,12 +20,26 @@ export default async function handler(req, res) {
                     if (!recipe) {
                         return res.status(404).json({ success: false, message: 'Recipe not found' });
                     }
-                    res.status(200).json({ success: true, data: recipe });
+                    let isFavorite = false;
+                    const userId = req.user ? req.user._id : null;
+            
+                    if (userId) {
+                        // Check if the recipe is in the user's favorites
+                        const favorite = await Favorite.findOne({ userID: userId, recipeID: recipeId });
+                        isFavorite = !!favorite;
+                    }
+            
+                    const recipeObject = recipe.toObject();
+                    recipeObject.favorite = isFavorite;
+                    res.status(200).json({ success: true, data: recipeObject });
                 } catch (error) {
                     res.status(500).json({ success: false, message: error.message });
                 }
                 break;
             case 'PUT':
+                if (!req.user) {
+                    return res.status(401).json({ success: false, message: 'Unauthorized' });
+                }
                 // Update a recipe, only authors or admins can update
                 validateRecipeUpdate(req, res, async () => {
                     try {
@@ -64,6 +80,9 @@ export default async function handler(req, res) {
                 break;
             case 'DELETE':
                 // Delete a recipe, only authors or admins can delete
+                if (!req.user) {
+                    return res.status(401).json({ success: false, message: 'Unauthorized' });
+                }
                 try {
                     const recipe = await Recipe.findById(recipeId);
                     if (!recipe) {

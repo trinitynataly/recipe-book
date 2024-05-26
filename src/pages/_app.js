@@ -1,7 +1,16 @@
 import "@/styles/scss/main.scss";
-import useTokenRefresh from "@/hooks/useTokenRefresh";
+import { UserProvider } from '@/context/UserContext';
+import { ToastProvider } from "@/context/ToastContext";
+import { PhotoUploadProvider } from "@/context/PhotoUploadContext";
 
 export default function App({ Component, pageProps }) {
-  useTokenRefresh();
-  return <Component {...pageProps} />;
+  return (
+    <UserProvider>
+      <ToastProvider>
+        <PhotoUploadProvider>
+          <Component {...pageProps} />;
+        </PhotoUploadProvider>
+      </ToastProvider>
+    </UserProvider>
+  )
 }
