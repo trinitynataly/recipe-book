@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import RecipeCard from "@/components/recipes/RecipeCard";
+import RecipeCard from "@/components/recipes/recipecard";
 
 const RecipeTable = ({ title, recipes, page = 1, totalPages = 1 }) => {
   const { data: session, status } = useSession();
