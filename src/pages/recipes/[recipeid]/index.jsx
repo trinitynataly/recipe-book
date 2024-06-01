@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import Head from 'next/head';
 import apiRequest from '@/lib/apiRequest';
-import RecipeView from "@/components/recipes/RecipeView";
+import RecipeView from "@/components/recipes/recipeview";
 import Error404 from "@/pages/404";
 
 const RecipePage = ({ recipe, error }) => {

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import Head from 'next/head';
 import Layout from "@/components/layout/layout";
-import RecipeTable from "@/components/recipes/RecipeTable";
+import RecipeTable from "@/components/recipes/recipetable";
 import apiRequest from '@/lib/apiRequest';
 
 const Home = ({ recipes, pagination }) => {

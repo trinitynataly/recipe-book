@@ -79,7 +79,6 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { categoryslug } = params;
   const { category } = await fetchDatoCMS(GET_CATEGORY_BY_SLUG, { slug: categoryslug });
-  console.log(category);
 
   const data = await fetchDatoCMS(GET_POSTS_BY_CATEGORY_ID, {
     category: category.id,
