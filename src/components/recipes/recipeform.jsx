@@ -5,12 +5,13 @@ import 'react-quill/dist/quill.snow.css';
 
 
 const RecipeForm = ({ onSubmit, initialData = {}, submitButtonText = 'Submit' }) => {
+    console.log(initialData);
     const [title, setTitle] = useState(initialData.title || '');
     const [description, setDescription] = useState(initialData.description || '');
-    const [ingredients, setIngredients] = useState(initialData.ingredients ? initialData.ingredients.join(',') : '');
+    const [ingredients, setIngredients] = useState(initialData.ingredients ? initialData.ingredients : '');
     const [cookTime, setCookTime] = useState(initialData.cook_time || '');
     const [instructions, setInstructions] = useState(initialData.instructions || '');
-    const [tags, setTags] = useState(initialData.tags ? initialData.tags.join(',') : '');
+    const [tags, setTags] = useState(initialData.tags ? initialData.tags.map(tag => tag.name).join(', ') : '');
     const [type, setType] = useState(initialData.type || 'Breakfast');
 
     const handleSubmit = async (e) => {

@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import Recipe from '@/models/Recipe';
 
 // Schema for creating a new recipe
 const recipeCreationSchema = Joi.object({
@@ -8,7 +7,7 @@ const recipeCreationSchema = Joi.object({
     ingredients: Joi.string().required(),
     cook_time: Joi.number().integer().positive().required(),
     instructions: Joi.string().required(),
-    tags: Joi.array().items(Joi.string()).optional(),
+    tags: Joi.array().items(Joi.string().allow(null, '')).optional(),
     type: Joi.string().valid('Breakfast', 'Lunch', 'Dinner', 'Snacks').required()
 });
 
@@ -28,7 +27,7 @@ const recipeUpdateSchema = Joi.object({
     ingredients: Joi.string().optional(),
     cook_time: Joi.number().integer().positive().optional(),
     instructions: Joi.string().optional(),
-    tags: Joi.array().items(Joi.string()).optional(),
+    tags: Joi.array().items(Joi.string().allow(null, '')).optional(),
     type: Joi.string().valid('Breakfast', 'Lunch', 'Dinner', 'Snacks').optional()
 });
 

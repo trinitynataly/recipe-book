@@ -2,11 +2,13 @@ import { Fragment } from "react";
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { useUser } from '@/context/UserContext';
+import { useSession } from 'next-auth/react';
 import RecipeCard from "@/components/recipes/RecipeCard";
 
 const RecipeTable = ({ title, recipes, page = 1, totalPages = 1 }) => {
-  const { user } = useUser();
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+  const user = loading ? null : session?.user;
   const router = useRouter();
 
   const getPageLink = (newPage) => {

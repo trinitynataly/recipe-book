@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useUser } from '@/context/UserContext';
+import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
 import { usePhotoUpload } from '@/context/PhotoUploadContext';
 import apiRequest from '@/lib/apiRequest';
@@ -12,10 +12,12 @@ import HeartFullIcon from '../../../public/icons/heart-full.svg';
 import PhotoStub from '../../../public/photo-stub.jpg';
 
 const RecipeCard = ({ recipe }) => {
-  const { user } = useUser();
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+  const user = loading ? null : session?.user;
   const { showToast } = useToast(); // Get the showToast function from ToastContext
   const { openUpload } = usePhotoUpload(); // Get the openUpload function from PhotoUploadContext
-  const isAuthorOrAdmin = user && (user.isAdmin || user._id === recipe.authorID);
+  const isAuthorOrAdmin = user && (user.isAdmin || user.id === recipe.authorID);
   const [isFavourite, setIsFavourite] = useState(recipe.favorite); // Assume recipe has an `isFavourite` property
   const [photo, setPhoto] = useState(recipe.photo); // Assume recipe has a `photo` property
 
@@ -36,9 +38,7 @@ const RecipeCard = ({ recipe }) => {
     if (!user) return; // User must be logged in to toggle favorite
 
     try {
-      const endpoint = `recipes/${recipe._id}/favorite`;
-      const method = 'POST';
-      const { success, favorite } = await apiRequest(endpoint, method);
+      const { success, favorite } = await apiRequest(`recipes/${recipe._id}/favorite`, 'POST');
       if (!success) {
         showToast('Error', 'Failed to toggle favorite status', 'error');
         return;

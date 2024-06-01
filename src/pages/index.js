@@ -30,9 +30,12 @@ export const getServerSideProps = async (context) => {
   const page = parseInt(context.query.page) || 1;
   let recipes = [];
   let pagination = {};
+  let data = {
+    page,
+  }
 
   try {
-    const response = await apiRequest(`recipes?page=${page}`, 'GET', null, context); // Pass context here
+    const response = await apiRequest(`recipes`, 'GET', data, context);
     if (response.success) {
       recipes = response.data;
       pagination = response.pagination;

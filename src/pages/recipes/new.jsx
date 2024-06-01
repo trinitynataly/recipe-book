@@ -1,14 +1,21 @@
 import { Fragment } from "react";
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import Layout from "@/components/layout/layout";
 import RecipeForm from "@/components/recipes/recipeform";
 import apiRequest from '@/lib/apiRequest';
 import { useToast } from "@/context/ToastContext";
 
 const NewRecipePage = () => {
+    const { data: session, status } = useSession();
+    const loading = status === 'loading';
+    const user = loading ? null : session?.user;
     const router = useRouter();
     const { showToast } = useToast();
+    if (!loading && !user) {
+        return null;
+    }
     const handleSubmit = async (formData) => {
         try {
             const response = await apiRequest('recipes', 'POST', formData);

@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
-import { useUser } from '@/context/UserContext';
 import styles from '../../styles/scss/components/layout/topbar.module.scss';
 
 const TopBar = ({ onToggleTheme, isDarkMode }) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const { user } = useUser();
     const router = useRouter();
+    const { data: session, status } = useSession();
+    const loading = status === 'loading';
+    const user = loading ? null : session?.user;
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);

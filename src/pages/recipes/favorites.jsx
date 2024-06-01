@@ -29,22 +29,22 @@ const Favorites = ({ recipes, pagination }) => {
 };
 
 export const getServerSideProps = async (context) => {
-const { req, res, query } = context;
-  const page = parseInt(query.page) || 1;
+  const page = parseInt(context.query.page) || 1;
   let recipes = [];
-  let pagination = {
-    currentPage: 1,
-    totalPages: 1,
-  };
+  let pagination = {};
+  let data = {
+    type: 'breakfast',
+    page,
+  }
 
   try {
-    const response = await apiRequest(`recipes/favorites?page=${page}`, 'GET', null, context);
+    const response = await apiRequest(`recipes/favorites`, 'GET', data, context);
     if (response.success) {
       recipes = response.data;
       pagination = response.pagination;
     }
   } catch (error) {
-    console.error('Error fetching favorite recipes:', error);
+    console.error('Error fetching recipes:', error);
   }
 
   return {

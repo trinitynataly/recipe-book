@@ -1,32 +1,32 @@
-import { verifyToken } from '@/lib/auth';
-import cookie from 'cookie';
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 29/05/2024
+A helper function to authenticate the user session in the API routes.
+*/
 
-const authenticate = (req, res, next) => {
-    const cookies = req.headers.cookie;
-    let token = null;
+// Import the getSession function from next-auth/react
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
 
-    if (cookies) {
-        const parsedCookies = cookie.parse(cookies);
-        token = parsedCookies.access_token;
+// Define the authenticate middleware function
+const authenticate = async (req, res) => {
+    const session = await getServerSession(req, res, authOptions)
+    /*
+    Authenticate the user session in the API routes.
+    Parameters:
+    - req: the request object from the API route
+    */
+    // Get the user session from the request
+    if (session) {
+        // If yes, set the user in the request object
+        req.user = session.user;
+    } else {
+        // If no, Set the user as null in the request object
+        req.user = null;
     }
-
-    if (!token && req.headers.authorization) {
-        const parts = req.headers.authorization.split(' ');
-        if (parts.length === 2 && parts[0] === 'Bearer') {
-            token = parts[1];
-        }
-    }
-
-    if (token) {
-        const decodedToken = verifyToken(token);
-        if (decodedToken) {
-            const { user: decodedUser, tokenType } = decodedToken;
-            if (decodedUser && tokenType === 'access_token') {
-                req.user = decodedUser;
-            }
-        }
-    }
-    next();
+    console.log(req.user);
 };
 
+// Export the authenticate middleware function
 export default authenticate;

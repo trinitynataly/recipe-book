@@ -5,6 +5,10 @@ import RecipeTable from "@/components/recipes/RecipeTable";
 import apiRequest from '@/lib/apiRequest';
 
 const SearchResults = ({ keyword, recipes, pagination }) => {
+  if (!keyword) {
+    return null;
+  }
+
   const { currentPage, totalPages } = pagination;
 
   return (
@@ -33,14 +37,29 @@ export const getServerSideProps = async (context) => {
   let recipes = [];
   let pagination = {};
 
-  try {
-    const response = await apiRequest(`recipes/search?keyword=${keyword}&page=${page}`, 'GET', null, context);
-    if (response.success) {
-      recipes = response.data;
-      pagination = response.pagination;
+  if (!keyword) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  if (keyword) {
+    const data = {
+      keyword,
+      page,
+    };
+    try {
+      const response = await apiRequest(`recipes/search`, 'GET', data, context);
+      if (response.success) {
+        recipes = response.data;
+        pagination = response.pagination;
+      }
+    } catch (error) {
+      console.error('Error fetching search results:', error);
     }
-  } catch (error) {
-    console.error('Error fetching search results:', error);
   }
 
   return {

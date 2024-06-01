@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useBlog } from '@/context/BlogContext';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
-import { useUser } from '@/context/UserContext';
 import BreakfastIcon from '../../../public/icons/brekfast.svg';
 import LunchIcon from '../../../public/icons/lunch.svg';
 import DinnerIcon from '../../../public/icons/dinner.svg';
@@ -14,9 +15,12 @@ import AdminIcon from '../../../public/icons/admin.svg';
 import ExitIcon from '../../../public/icons/exit.svg';
 
 function Layout({ children }) {
-    const { user } = useUser();
+    const { data: session, status } = useSession();
+    const loading = status === 'loading';
+    const user = loading ? null : session?.user;
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const { categories } = useBlog();
 
     useEffect(() => {
         const handleResize = () => {
@@ -54,9 +58,16 @@ function Layout({ children }) {
         }
     };
 
+    const blogSubMenu = categories.map((category) => ({
+        text: category.title,
+        href: `/blog/${category.slug}`,
+        icon: <BookIcon />, // Replace with appropriate icons if available
+      }));
+
     const menuItems = [
         {
             text: 'All Recipes',
+            href: '/',
             icon: <DashboardIcon />,
             submenu: [
                 { text: 'Breakfast', href: '/recipes/breakfast', icon: <BreakfastIcon /> },
@@ -66,7 +77,7 @@ function Layout({ children }) {
             ],
         },
         user && { text: 'My Favourites', href: '/recipes/favorites', icon: <HeartIcon /> },
-        { text: 'Blog', href: './blog', icon: <BookIcon /> },
+        { text: 'Blog', href: '/blog', icon: <BookIcon />, submenu: blogSubMenu },
         { text: 'About', href: '/about', icon: <InfoIcon /> },
         user && user.isAdmin && {
             text: 'Admin',

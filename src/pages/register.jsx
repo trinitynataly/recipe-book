@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import Logo from '../../public/recipe_book_logo.svg';
 import Joi from 'joi';
-import { useUser } from '@/context/UserContext';
+import axios from 'axios';
+import { signIn } from 'next-auth/react';
 
 export default function Register() {
-  const { register, loading, error: contextError } = useUser();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -16,12 +16,6 @@ export default function Register() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
-
-  useEffect(() => {
-    if (contextError) {
-      setError(contextError);
-    }
-  }, [contextError]);
 
   const schema = Joi.object({
     firstName: Joi.string().min(1).required().messages({
@@ -61,17 +55,27 @@ export default function Register() {
     }
 
     try {
-      const success = await register(firstName, lastName, email, password);
-      if (success) {
+      const lowerCaseEmail = email.toLowerCase();
+      const response = await axios.post('/api/auth/register', {
+        firstName,
+        lastName,
+        email: lowerCaseEmail,
+        password,
+      });
+      if (response.status === 201) {
         setSuccess('Registration successful! Redirecting to home...');
-        setTimeout(() => {
+        // Auto-authenticate the user
+        const res = await signIn('credentials', { redirect: false, email: lowerCaseEmail, password });
+        if (!res.error) {
           router.push('/');
-        }, 2000);
+        } else {
+          setError('Authentication failed after registration. Please log in manually.');
+        }
       } else {
         setError('Registration failed. Please try again.');
       }
     } catch (error) {
-      setError(error.message);
+      setError(error.response?.data?.message || error.message);
     }
   };
 
@@ -107,7 +111,6 @@ export default function Register() {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-gray-500 focus:border-gray-500 focus:z-10 sm:text-sm"
                   placeholder="First Name"
                   onChange={(e) => setFirstName(e.target.value)}
-                  disabled={loading}
                 />
               </div>
               <div>
@@ -121,7 +124,6 @@ export default function Register() {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 focus:z-10 sm:text-sm"
                   placeholder="Last Name"
                   onChange={(e) => setLastName(e.target.value)}
-                  disabled={loading}
                 />
               </div>
               <div>
@@ -135,7 +137,6 @@ export default function Register() {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 focus:z-10 sm:text-sm"
                   placeholder="Email address"
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
                 />
               </div>
               <div>
@@ -149,7 +150,6 @@ export default function Register() {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 focus:z-10 sm:text-sm"
                   placeholder="Password"
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
                 />
               </div>
               <div>
@@ -163,14 +163,13 @@ export default function Register() {
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-gray-500 focus:border-gray-500 focus:z-10 sm:text-sm"
                   placeholder="Confirm Password"
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={loading}
                 />
               </div>
             </div>
 
             <div>
-              <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-tertiary focus:bg-tertiary bg-primary" disabled={loading}>
-                {loading ? 'Registering...' : 'Register new account'}
+              <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-tertiary focus:bg-tertiary bg-primary">
+                Register new account
               </button>
             </div>
           </form>
