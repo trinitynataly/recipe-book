@@ -3,9 +3,7 @@ import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 
-
 const RecipeForm = ({ onSubmit, initialData = {}, submitButtonText = 'Submit' }) => {
-    console.log(initialData);
     const [title, setTitle] = useState(initialData.title || '');
     const [description, setDescription] = useState(initialData.description || '');
     const [ingredients, setIngredients] = useState(initialData.ingredients ? initialData.ingredients : '');
@@ -84,7 +82,7 @@ const RecipeForm = ({ onSubmit, initialData = {}, submitButtonText = 'Submit' })
                     value={ingredients}
                     onChange={setIngredients}
                     theme="snow"
-                    className="h-64"
+                    className="h-96"
                 />
             </div>
             <div className="mb-4">
@@ -93,7 +91,7 @@ const RecipeForm = ({ onSubmit, initialData = {}, submitButtonText = 'Submit' })
                     value={instructions}
                     onChange={setInstructions}
                     theme="snow"
-                    className="h-64"
+                    className="h-96"
                 />
             </div>
             <div className="mb-4">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { LuMenuSquare } from 'react-icons/lu';
 import Logo from '../../../public/recipe_book_logo.svg';
-import SidebarItem from './sidebaritem';
+import SidebarSection from './sidebarsection';
 
 function Sidebar({ items, isMobile }) {
 
@@ -31,7 +31,7 @@ function Sidebar({ items, isMobile }) {
                 </div>
                 <ul className={`bg-sidebarBg dark:bg-darkSidebarBg flex-1 px-3 ${isMobile ? (menuVisible ? 'block z-50 absolute w-full' : 'hidden') : 'block'}`}>
                     {items.map((item, index) => (
-                        <SidebarItem key={index} icon={item.icon} text={item.text} href={item.href} submenu={item.submenu} />
+                        <SidebarSection key={index} icon={item.icon} text={item.text} href={item.href} submenu={item.submenu} />
                     ))}
                 </ul>
             </nav>

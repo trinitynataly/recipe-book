@@ -10,10 +10,10 @@ export const client = new GraphQLClient(endpoint, {
 
 export const fetchDatoCMS = async (query, variables = {}) => {
     try {
-        const data = await client.request(query, variables);
-        return data;
+      return await client.request(query, variables);
     } catch (error) {
-        return {};
+      console.error(error);
+      return {};
     }
 };
 

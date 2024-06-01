@@ -6,6 +6,7 @@ import Layout from "@/components/layout/layout";
 import RecipeForm from "@/components/recipes/recipeform";
 import apiRequest from '@/lib/apiRequest';
 import { useToast } from "@/context/ToastContext";
+import Error404 from "@/pages/404";
 
 const NewRecipePage = () => {
     const { data: session, status } = useSession();
@@ -14,7 +15,7 @@ const NewRecipePage = () => {
     const router = useRouter();
     const { showToast } = useToast();
     if (!loading && !user) {
-        return null;
+        return <Error404 />;
     }
     const handleSubmit = async (formData) => {
         try {

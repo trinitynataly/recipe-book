@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { fetchDatoCMS, GET_POSTS_BY_CATEGORY_ID, GET_CATEGORY_BY_SLUG, GET_ALL_CATEGORIES } from '@/lib/datocms';
 import Layout from '@/components/layout/layout';
 import Link from 'next/link';
@@ -9,8 +8,6 @@ import Image from 'next/image';
 const POSTS_PER_PAGE = 12;
 
 const CategoryPage = ({ category, initialPosts, totalPosts }) => {
-  console.log(category, initialPosts, totalPosts);
-  const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(totalPosts / POSTS_PER_PAGE));
@@ -82,6 +79,7 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { categoryslug } = params;
   const { category } = await fetchDatoCMS(GET_CATEGORY_BY_SLUG, { slug: categoryslug });
+  console.log(category);
 
   const data = await fetchDatoCMS(GET_POSTS_BY_CATEGORY_ID, {
     category: category.id,

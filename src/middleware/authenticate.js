@@ -25,7 +25,6 @@ const authenticate = async (req, res) => {
         // If no, Set the user as null in the request object
         req.user = null;
     }
-    console.log(req.user);
 };
 
 // Export the authenticate middleware function

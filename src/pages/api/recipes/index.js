@@ -99,7 +99,6 @@ export default async function handler(req, res) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
         validateRecipeCreation(req, res, async () => {
-            console.log('zzz2');
             const { title, description, ingredients, cook_time, instructions, tags, type } = req.body;
             try {
                 // Handle tags
@@ -116,7 +115,6 @@ export default async function handler(req, res) {
 
                     tagIds.push(tag._id);
                 }
-                console.log(tagIds);
 
                 const newRecipe = new Recipe({
                     title,

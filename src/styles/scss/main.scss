@@ -5,4 +5,10 @@
 .quill {
     display: flex;
     flex-direction: column;
+    .ql-toolbar.ql-snow {
+        height: 2.75rem;
+    }
+    .ql-container {
+        height: 21.25rem;
+    }
 }

@@ -100,6 +100,8 @@ export default async function handler(req, res) {
                 }
 
                 await Recipe.findByIdAndDelete(recipeId);
+                // Delete all favorite records associated with this recipe
+                await Favorite.deleteMany({ recipeID: recipeId });
                 res.status(200).json({ success: true, message: 'Recipe deleted' });
             } catch (error) {
                 res.status(500).json({ success: false, message: error.message });

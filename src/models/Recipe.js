@@ -7,6 +7,7 @@ A Mongoose model for the Recipe collection to store recipe data.
 
 // Import the mongoose library
 import mongoose from 'mongoose';
+import { slugify, generateUniqueSlug } from '@/lib/utils';
 
 // Define the Recipe schema
 const RecipeSchema = new mongoose.Schema({
@@ -14,6 +15,11 @@ const RecipeSchema = new mongoose.Schema({
     title: {
         type: String, // Define the title data type
         required: true // Set the field as required
+    },
+    // Define the slug field
+    slug: {
+        type: String, // Define the slug data type
+        required: false // Set the field as required
     },
     // Define the description field
     description: {
@@ -58,6 +64,33 @@ const RecipeSchema = new mongoose.Schema({
         required: true // Set the field as required
     }
 }, { timestamps: true }); // Add timestamps for createdAt and updatedAt fields
+
+// Create a hook to generate a unique slug before saving the recipe
+RecipeSchema.pre('save', async function(next) {
+    // Generate a unique slug based on the title
+    const baseSlug = slugify(this.title);
+    // Ensure the slug is unique and save it 
+    this.slug = await generateUniqueSlug(this.constructor, baseSlug, 0, this._id);
+    // Continue with the save operation
+    next();
+});
+
+// Create a hook to generate a unique slug before updating the recipe
+RecipeSchema.pre('findOneAndUpdate', async function(next) {
+    // Get the update object
+    const update = this.getUpdate();
+    // Check if the title is being modified
+    if (update.title) {
+        // Generate a unique slug based on the updated title
+        const baseSlug = slugify(update.title);
+        // Ensure the slug is unique and update it
+        update.slug = await generateUniqueSlug(this.model, baseSlug, 0, this._id);
+        // Update the document with the new slug
+        this.setUpdate(update);
+    }
+    // Continue with the update operation
+    next();
+});
 
 // Define the Recipe model with the Recipe schema if it does not exist
 const RecipeModel = mongoose.models.Recipe || mongoose.model('Recipe', RecipeSchema);

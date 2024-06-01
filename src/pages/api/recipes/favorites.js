@@ -9,7 +9,10 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const userId = req.user.id;
+            const userId = req.user ? req.user.id : null;  // Check if user is logged in
+            if (!userId) {
+                return res.status(401).json({ success: false, message: 'Unauthorized' });
+            }
             const { page = 1, per_page = 12 } = req.query;
 
             const pageInt = parseInt(page, 10);
@@ -21,14 +24,18 @@ export default async function handler(req, res) {
                 .populate({
                     path: 'recipeID',
                     populate: { path: 'tags' } // populate tags if needed
-                })
-                .skip(skip)
-                .limit(perPageInt);
+                });
 
-            const totalFavorites = await Favorite.countDocuments({ userID: userId });
+            // Filter out favorite records that do not have corresponding recipe records
+            const validFavoriteRecipes = favoriteRecipes.filter(fav => fav.recipeID);
+
+            const totalFavorites = validFavoriteRecipes.length;
             const totalPages = Math.ceil(totalFavorites / perPageInt);
 
-            const recipes = favoriteRecipes.map(fav => fav.recipeID);
+            // Paginate the valid favorite recipes
+            const paginatedFavorites = validFavoriteRecipes.slice(skip, skip + perPageInt);
+
+            const recipes = paginatedFavorites.map(fav => fav.recipeID);
 
             const recipesWithFavorite = recipes.map(recipe => {
                 const recipeObject = recipe.toObject();

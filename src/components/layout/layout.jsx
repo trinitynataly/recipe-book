@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import { useBlog } from '@/context/BlogContext';
 import Sidebar from './sidebar';
 import TopBar from './topbar';
+import Footer from './footer';
 import BreakfastIcon from '../../../public/icons/brekfast.svg';
 import LunchIcon from '../../../public/icons/lunch.svg';
 import DinnerIcon from '../../../public/icons/dinner.svg';
@@ -11,7 +12,6 @@ import DashboardIcon from '../../../public/icons/dashboard.svg';
 import BookIcon from '../../../public/icons/book.svg';
 import HeartIcon from '../../../public/icons/heart.svg';
 import InfoIcon from '../../../public/icons/info.svg';
-import AdminIcon from '../../../public/icons/admin.svg';
 import ExitIcon from '../../../public/icons/exit.svg';
 
 function Layout({ children }) {
@@ -24,7 +24,7 @@ function Layout({ children }) {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth <= 640) {
+            if (window.innerWidth <= 800) {
                 setIsMobile(true);
             } else {
                 setIsMobile(false);
@@ -58,7 +58,7 @@ function Layout({ children }) {
         }
     };
 
-    const blogSubMenu = categories.map((category) => ({
+    const blogSubMenu = categories?.map((category) => ({
         text: category.title,
         href: `/blog/${category.slug}`,
         icon: <BookIcon />, // Replace with appropriate icons if available
@@ -79,30 +79,18 @@ function Layout({ children }) {
         user && { text: 'My Favourites', href: '/recipes/favorites', icon: <HeartIcon /> },
         { text: 'Blog', href: '/blog', icon: <BookIcon />, submenu: blogSubMenu },
         { text: 'About', href: '/about', icon: <InfoIcon /> },
-        user && user.isAdmin && {
-            text: 'Admin',
-            icon: <AdminIcon />,
-            submenu: [
-                { text: 'Users', href: '/admin/users', icon: <AdminIcon /> },
-                { text: 'Recipes', href: '/admin/recipes', icon: <AdminIcon /> },
-            ],
-        },
         user && { text: 'Sign Out', href: '/logout', icon: <ExitIcon /> },
     ].filter(Boolean); // Filter out null items
-
-    const handleSearch = (query) => {
-        // Implement search functionality here
-        console.log('Searching for:', query);
-    };
 
     return (
         <div className={`flex min-h-screen ${isMobile ? 'flex-col' : 'flex-row'}`}>
             <Sidebar items={menuItems} isMobile={isMobile} />
             <div className={`flex-1 flex flex-col ${isMobile ? '' : 'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
-                <TopBar onSearch={handleSearch} onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+                <TopBar onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
                 <main className="flex-1 overflow-auto p-4 bg-backgroundEnd dark:bg-darkBackgroundEnd text-foreground dark:text-foreground">
                     {children}
                 </main>
+                <Footer />
             </div>
         </div>
     );

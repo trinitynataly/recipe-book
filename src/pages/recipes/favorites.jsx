@@ -31,9 +31,11 @@ const Favorites = ({ recipes, pagination }) => {
 export const getServerSideProps = async (context) => {
   const page = parseInt(context.query.page) || 1;
   let recipes = [];
-  let pagination = {};
+  let pagination = {
+    currentPage: 1,
+    totalPages: 1,
+  };
   let data = {
-    type: 'breakfast',
     page,
   }
 

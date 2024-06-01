@@ -57,6 +57,20 @@ UserSchema.pre('save', async function(next) {
     next();
 });
 
+
+// Pre-update hook to hash password on update
+UserSchema.pre('findOneAndUpdate', async function(next) {
+    const update = this.getUpdate();
+    // Check if the password is being modified
+    if (update.password) {
+        // Hash the password before updating the user
+        update.password = await hashPassword(update.password);
+        this.setUpdate(update); // Ensure the updated document has the hashed password
+    }
+    // Continue with the update operation
+    next();
+});
+
 // Define the User model with the User schema if it does not exist
 const UserModel = mongoose.models.User || mongoose.model('User', UserSchema);
 

@@ -8,7 +8,6 @@ import { useBlog } from '@/context/BlogContext';
 const POSTS_PER_PAGE = 3;
 
 const BlogPage = ({ postsByCategory }) => {
-  console.log('postsByCategory', postsByCategory);
   const { categories } = useBlog();
 
   return (

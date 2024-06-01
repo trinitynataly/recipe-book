@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Layout from "@/components/layout/layout";
@@ -11,7 +12,11 @@ import Error404 from "@/pages/404";
 const EditRecipePage = ({ recipe, error }) => {
     const router = useRouter();
     const { showToast } = useToast();
-    if (error) {
+    const { data: session, status } = useSession();
+    const loading = status === 'loading';
+    const user = loading ? null : session?.user;
+    const isAuthorOrAdmin = user && (user.isAdmin || user.id === recipe.authorID);
+    if (error || !isAuthorOrAdmin) {
         return <Error404 />;
       }
     const handleSubmit = async (formData) => {

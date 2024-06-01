@@ -9,6 +9,8 @@ An API route to search for recipes by keyword with pagination.
 import dbConnect from '@/lib/mongodb';
 // Import the Recipe model
 import Recipe from '@/models/Recipe';
+// Imoprt the Favorite model
+import Favorite from '@/models/Favorite';
 // Import the authenticate middleware
 import authenticate from '@/middleware/authenticate';
 
@@ -23,6 +25,7 @@ export default async function handler(req, res) {
         try {
             // Get the keyword, page, and per_page query parameters
             const { keyword, page = 1, per_page = 12 } = req.query;
+            const userId = req.user ? req.user.id : null;
             // Define the search query
             const query = {
                 $or: [
@@ -40,11 +43,29 @@ export default async function handler(req, res) {
             // Calculate how many recipes to skip based on the page number
             const skip = (pageInt - 1) * perPageInt;
 
+            let userFavoriteRecipeIds = [];
+
+            if (userId) {
+                // Fetch the user's favorite recipes if user is logged in
+                const userFavorites = await Favorite.find({ userID: userId }).select('recipeID');
+                userFavoriteRecipeIds = userFavorites.map(fav => fav.recipeID.toString());
+            }
+
             // Find recipes that match the search query
             const recipes = await Recipe.find(query)
                 .populate('tags') // Populate the tags field
                 .skip(skip) // Skip recipes based on the page number
                 .limit(perPageInt); // Limit the number of recipes per page
+            
+            const recipesWithFavorite = recipes.map(recipe => {
+                const recipeObject = recipe.toObject();
+                if (userId) {
+                    recipeObject.favorite = userFavoriteRecipeIds.includes(recipeObject._id.toString());
+                } else {
+                    recipeObject.favorite = false;  // No favorite field if no user
+                }
+                return recipeObject;
+            });
 
             // Get the total number of recipes that match the search query
             const totalRecipes = await Recipe.countDocuments(query);
@@ -54,7 +75,7 @@ export default async function handler(req, res) {
             // Return the recipes, total number of recipes, total number of pages, current page, and recipes per page
             res.status(200).json({
                 success: true, // Return success as true
-                data: recipes, // Return the recipes
+                data: recipesWithFavorite, // Return the recipes
                 pagination: { // Return the pagination data
                     totalRecipes, // Return the total number of recipes
                     totalPages, // Return the total number of pages
