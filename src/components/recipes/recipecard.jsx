@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
 import { usePhotoUpload } from '@/context/PhotoUploadContext';
+import { slugify } from '@/lib/utils';
 import apiRequest from '@/lib/apiRequest';
 import CameraIcon from '../../../public/icons/camera.svg';
 import PencilIcon from '../../../public/icons/pencil.svg';
@@ -20,6 +21,19 @@ const RecipeCard = ({ recipe }) => {
   const isAuthorOrAdmin = user && (user.isAdmin || user.id === recipe.authorID);
   const [isFavourite, setIsFavourite] = useState(recipe.favorite); // Assume recipe has an `isFavourite` property
   const [photo, setPhoto] = useState(recipe.photo); // Assume recipe has a `photo` property
+  const recipeUrl = `/recipes/${slugify(recipe.type)}/${recipe.slug}`;
+  const STORAGE_METHOD = process.env.NEXT_PUBLIC_STORAGE_METHOD;
+  const s3BucketUrl = process.env.NEXT_PUBLIC_S3_BUCKET_URL; 
+
+  const getPhotoUrl = () => {
+    if (!photo) {
+      return PhotoStub;
+    }
+    if (STORAGE_METHOD === 's3') {
+      return `${s3BucketUrl}/public/${photo}`;
+    }
+    return `/uploads/${photo}`;
+  };
 
   const onUploadSuccess = (updatedRecipe) => {
     setPhoto(updatedRecipe.photo);
@@ -58,24 +72,14 @@ const RecipeCard = ({ recipe }) => {
 
   return (
     <div className="border rounded-lg overflow-hidden shadow-lg relative">
-      <Link href={`/recipes/${recipe._id}`} className="block w-full h-48 relative">
-        {photo ? (
-          <Image
-            src={`/uploads/${photo}`}
-            alt={recipe.title}
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-          />
-        ) : (
-          <Image
-            src={PhotoStub}
-            alt={recipe.title}
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-          />
-        )}
+      <Link href={recipeUrl} className="block w-full h-48 relative">
+      <Image
+          src={getPhotoUrl()}
+          alt={recipe.title}
+          fill
+          style={{ objectFit: 'cover' }}
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+        />
       </Link>
       <div className="absolute top-2 right-2 flex space-x-2">
         {isAuthorOrAdmin && (
@@ -84,7 +88,7 @@ const RecipeCard = ({ recipe }) => {
           </button>
         )}
         {isAuthorOrAdmin && (
-          <Link href={`/recipes/${recipe._id}/edit`} className="bg-white p-2 rounded-full shadow-md">
+          <Link href={`${recipeUrl}/edit`} className="bg-white p-2 rounded-full shadow-md">
             <PencilIcon className="w-6 h-6 text-gray-600" />
           </Link>
         )}
@@ -100,11 +104,11 @@ const RecipeCard = ({ recipe }) => {
       </div>
       <div className="p-4">
         <h2 className="text-xl font-bold mb-2">
-          <Link href={`/recipes/${recipe._id}`}>{recipe.title}</Link>
+          <Link href={recipeUrl}>{recipe.title}</Link>
         </h2>
         <p className="text-gray-700">{recipe.description}</p>
         <p className="text-gray-600 mt-2">Type: {recipe.type}</p>
-        <Link href={`/recipes/${recipe._id}`} className="mt-4 bg-gray-200 hover:bg-tertiary text-gray-600 hover:text-white px-4 py-2 rounded inline-block">
+        <Link href={recipeUrl} className="mt-4 bg-gray-200 hover:bg-tertiary text-gray-600 hover:text-white px-4 py-2 rounded inline-block">
           Start To Cook
         </Link>
       </div>

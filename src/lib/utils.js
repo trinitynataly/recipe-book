@@ -5,6 +5,9 @@ Last edit date: 1/06/2024
 Utility functions for the application.
 */
 
+// Import the html-to-text package
+import { htmlToText } from 'html-to-text';
+
 // Define a function to generate a slug from a title
 const slugify = (title) => {
     /**
@@ -41,5 +44,24 @@ const generateUniqueSlug = async (model, baseSlug, suffix = 0, currentId = null)
     return generateUniqueSlug(model, baseSlug, suffix + 1, currentId);
 }
 
+// Define a function to strip HTML tags from a string and truncate it to a given length
+const stripHtml = (html, maxLength = 200) => {
+    /**
+     * Function to strip HTML tags from a string and truncate it to a given length
+     * @param html - The HTML string to strip tags from
+     * @param maxLength - The maximum length of the string to return (default is 200)
+     * 
+     * @returns {string} - The stripped and truncated string
+     */
+    // Convert the HTML to plain text
+    const text = htmlToText(html, {
+        wordwrap: false, // Disable word wrapping
+        ignoreHref: true, // Ignore links
+        ignoreImage: true, // Ignore images
+      });
+    // Return the text content truncated to the maximum length
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
+
 // Export the utility functions
-export { slugify, generateUniqueSlug }
+export { slugify, generateUniqueSlug, stripHtml }

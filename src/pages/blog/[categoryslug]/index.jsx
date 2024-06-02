@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { fetchDatoCMS, GET_POSTS_BY_CATEGORY_ID, GET_CATEGORY_BY_SLUG, GET_ALL_CATEGORIES } from '@/lib/datocms';
+import { fetchDatoCMS, GET_POSTS_BY_CATEGORY_ID, GET_CATEGORY_BY_SLUG } from '@/lib/datocms';
 import Layout from '@/components/layout/layout';
-import Link from 'next/link';
 import { useState } from 'react';
-import Image from 'next/image';
+import BlogTable from '@/components/blog/blogtable';
 
 const POSTS_PER_PAGE = 12;
 
 const CategoryPage = ({ category, initialPosts, totalPosts }) => {
+  console.log(initialPosts);
   const [posts, setPosts] = useState(initialPosts);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(totalPosts / POSTS_PER_PAGE));
@@ -30,60 +30,33 @@ const CategoryPage = ({ category, initialPosts, totalPosts }) => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6"><Link href="/blog/">Cooking &amp; Food Blog</Link> / {category.title}</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {posts.map((post) => (
-            <div key={post.id} className="border p-4 rounded-lg">
-              <Link href={`/blog/${category.slug}/${post.slug}`} passHref>
-                <div>
-                  {post.picture && (
-                    <Image
-                      src={post.picture.url}
-                      alt={post.title}
-                      width={600}
-                      height={400}
-                      className="mb-4 rounded"
-                    />
-                  )}
-                  <h3 className="text-xl font-semibold">{post.title}</h3>
-                </div>
-              </Link>
-            </div>
-          ))}
+        <h1 className="text-3xl font-bold mb-6">{category.title}</h1>
+        <BlogTable
+          posts={posts}
+          page={currentPage}
+          totalPages={totalPages}
+         />
         </div>
-        <div className="mt-6">
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <button
-              key={index}
-              className={`px-4 py-2 border ${index + 1 === currentPage ? 'bg-blue-500 text-white' : ''}`}
-              onClick={() => fetchMorePosts(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      </div>
     </Layout>
   );
 };
 
-export async function getStaticPaths() {
-  const { allCategories } = await fetchDatoCMS(GET_ALL_CATEGORIES);
-  const paths = allCategories.map((category) => ({
-    params: { categoryslug: category.slug },
-  }));
+export const getServerSideProps = async (context) => {
+  const { categoryslug } = context.params;
+  const page = parseInt(context.query.page) || 1;
+  const skip = (page - 1) * POSTS_PER_PAGE;
 
-  return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }) {
-  const { categoryslug } = params;
   const { category } = await fetchDatoCMS(GET_CATEGORY_BY_SLUG, { slug: categoryslug });
+  if (!category) {
+    return {
+      notFound: true,
+    };
+  }
 
   const data = await fetchDatoCMS(GET_POSTS_BY_CATEGORY_ID, {
     category: category.id,
     first: POSTS_PER_PAGE,
-    skip: 0,
+    skip: skip,
   });
 
   return {
@@ -91,9 +64,10 @@ export async function getStaticProps({ params }) {
       category,
       initialPosts: data.allPosts,
       totalPosts: data._allPostsMeta.count,
+      currentPage: page,
     },
-    revalidate: 60, // Revalidate every 60 seconds
   };
 }
+
 
 export default CategoryPage;

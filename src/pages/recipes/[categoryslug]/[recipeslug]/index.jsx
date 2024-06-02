@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import Head from 'next/head';
 import apiRequest from '@/lib/apiRequest';
 import RecipeView from "@/components/recipes/recipeview";
+import { slugify } from "@/lib/utils";
 import Error404 from "@/pages/404";
 
 const RecipePage = ({ recipe, error }) => {
@@ -23,9 +24,9 @@ const RecipePage = ({ recipe, error }) => {
 };
 
 export const getServerSideProps = async (context) => {
-  const { recipeid } = context.query;
+  const { categoryslug, recipeslug } = context.query;
 
-  if (!recipeid) {
+  if (!recipeslug) {
     return {
       props: {
         recipe: null,
@@ -35,15 +36,25 @@ export const getServerSideProps = async (context) => {
   }
 
   try {
-    const response = await apiRequest(`recipes/${recipeid}`, 'GET', null, context);
+    const response = await apiRequest(`recipes/${recipeslug}`, 'GET', null, context);
 
     if (response && response.success) {
-      return {
-        props: {
-          recipe: response.data,
-          error: false,
-        },
-      };
+      const recipeCategorySlug = slugify(response.data.type);
+      if (recipeCategorySlug !== categoryslug) {
+        return {
+          redirect: {
+            destination: `/recipes/${recipeCategorySlug}/${recipeslug}`,
+            permanent: true,
+          },
+        };
+      } else {
+        return {
+          props: {
+            recipe: response.data,
+            error: false,
+          },
+        };
+      }
     } else {
       return {
         props: {

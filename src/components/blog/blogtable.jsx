@@ -1,14 +1,10 @@
-import { Fragment } from "react";
+import { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import RecipeCard from "@/components/recipes/recipecard";
+import BlogCard from './blogcard';
 
-const RecipeTable = ({ title, recipes, page = 1, totalPages = 1 }) => {
-  const { data: session, status } = useSession();
-  const loading = status === 'loading';
-  const user = loading ? null : session?.user;
+const BlogTable = ({ posts, page = 1, totalPages = 1 }) => {
   const router = useRouter();
 
   const getPageLink = (newPage) => {
@@ -23,15 +19,14 @@ const RecipeTable = ({ title, recipes, page = 1, totalPages = 1 }) => {
 
   return (
     <Fragment>
-      <h1 className="text-3xl font-bold mb-4">{title}</h1>
       <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
-        {recipes.length > 0 ? (
-          recipes.map((recipe) => (
-            <RecipeCard key={recipe._id} recipe={recipe} user={user} />
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <BlogCard key={post.id} post={post} categorySlug={router.query.categoryslug} />
           ))
         ) : (
           <div className="col-span-full text-center text-gray-500">
-            No recipes found.
+            No posts found.
           </div>
         )}
       </div>
@@ -60,11 +55,11 @@ const RecipeTable = ({ title, recipes, page = 1, totalPages = 1 }) => {
   );
 };
 
-RecipeTable.propTypes = {
+BlogTable.propTypes = {
   title: PropTypes.string.isRequired,
-  recipes: PropTypes.array.isRequired,
+  posts: PropTypes.array.isRequired,
   page: PropTypes.number.isRequired,
-  totalPages: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired
 };
 
-export default RecipeTable;
+export default BlogTable;

@@ -6,6 +6,7 @@ import Layout from "@/components/layout/layout";
 import RecipeForm from "@/components/recipes/recipeform";
 import apiRequest from '@/lib/apiRequest';
 import { useToast } from "@/context/ToastContext";
+import { slugify } from "@/lib/utils";
 import Error404 from "@/pages/404";
 
 const NewRecipePage = () => {
@@ -21,7 +22,7 @@ const NewRecipePage = () => {
         try {
             const response = await apiRequest('recipes', 'POST', formData);
             if (response.success) {
-                router.push(`/recipes/${response.data._id}`);
+                router.push(`/recipes/${slugify(response.data.type)}/${response.data.slug}`);
                 showToast('Success', 'Recipe created successfully', 'confirm');
             } else {
                 showToast('Error', response.message, 'error');

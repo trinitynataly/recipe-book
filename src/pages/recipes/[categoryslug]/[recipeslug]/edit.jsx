@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Layout from "@/components/layout/layout";
 import RecipeForm from "@/components/recipes/recipeform";
 import { useToast } from "@/context/ToastContext";
+import { slugify } from "@/lib/utils";
 import apiRequest from '@/lib/apiRequest';
 import Error404 from "@/pages/404";
 
@@ -49,9 +50,9 @@ const EditRecipePage = ({ recipe, error }) => {
 }
 
 export const getServerSideProps = async (context) => {
-    const { recipeid } = context.query;
+    const { categoryslug, recipeslug } = context.query;
   
-    if (!recipeid) {
+    if (!recipeslug) {
       return {
         props: {
           recipe: null,
@@ -61,15 +62,25 @@ export const getServerSideProps = async (context) => {
     }
   
     try {
-      const response = await apiRequest(`recipes/${recipeid}`, 'GET', null, context);
+      const response = await apiRequest(`recipes/${recipeslug}`, 'GET', null, context);
   
       if (response && response.success) {
-        return {
-          props: {
-            recipe: response.data,
-            error: false,
-          },
-        };
+        const recipeCategorySlug = slugify(response.data.type);
+        if (recipeCategorySlug !== categoryslug) {
+          return {
+            redirect: {
+              destination: `/recipes/${recipeCategorySlug}/${recipeslug}/edit`,
+              permanent: true,
+            },
+          };
+        } else {
+          return {
+            props: {
+              recipe: response.data,
+              error: false,
+            },
+          };
+        }
       } else {
         return {
           props: {

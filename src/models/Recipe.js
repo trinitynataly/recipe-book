@@ -1,13 +1,19 @@
 /*
-Version: 1.3
+Version: 1.4
 Last edited by: Natalia Pakhomova
-Last edit date: 17/05/2024
+Last edit date: 2/06/2024
 A Mongoose model for the Recipe collection to store recipe data.
 */
 
 // Import the mongoose library
 import mongoose from 'mongoose';
+// Import the slugify and generateUniqueSlug utility functions
 import { slugify, generateUniqueSlug } from '@/lib/utils';
+// Import the categories data
+import categories from '@/data/categories.json';
+
+// Get the category names from the categories data
+const categoryNames = categories.map(category => category.name);
 
 // Define the Recipe schema
 const RecipeSchema = new mongoose.Schema({
@@ -60,7 +66,7 @@ const RecipeSchema = new mongoose.Schema({
     // Define the type field
     type: {
         type: String, // Define the type data type
-        enum: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'], // Define the allowed values
+        enum: categoryNames, // Define the allowed values from the category JSON data
         required: true // Set the field as required
     }
 }, { timestamps: true }); // Add timestamps for createdAt and updatedAt fields

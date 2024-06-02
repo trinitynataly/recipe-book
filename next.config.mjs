@@ -13,6 +13,11 @@ const nextConfig = {
         hostname: 'www.datocms-assets.com',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'recipebookapp.s3.ap-southeast-2.amazonaws.com',
+        pathname: '**',
+      }
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

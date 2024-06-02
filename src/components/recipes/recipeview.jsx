@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
 import { usePhotoUpload } from '@/context/PhotoUploadContext';
+import { slugify } from '@/lib/utils';
 import apiRequest from '@/lib/apiRequest';
 import PhotoStub from '../../../public/photo-stub.jpg';
 import CameraIcon from '../../../public/icons/camera.svg';
@@ -21,6 +22,7 @@ const RecipeView = ({ recipe }) => {
   const [photo, setPhoto] = useState(recipe?.photo || null);
   const { showToast } = useToast();
   const { openUpload } = usePhotoUpload();
+  const recipeUrl = `/recipes/${slugify(recipe.type)}/${recipe.slug}`;
 
   const onUploadSuccess = (updatedRecipe) => {
     setPhoto(updatedRecipe.photo);
@@ -118,7 +120,7 @@ const RecipeView = ({ recipe }) => {
                     </button>
                   )}
                   {isAuthorOrAdmin && (
-                    <Link href={`/recipes/${recipe._id}/edit`} className="bg-white p-2 rounded-full shadow-md">
+                    <Link href={`${recipeUrl}/edit`} className="bg-white p-2 rounded-full shadow-md">
                       <PencilIcon className="w-6 h-6 text-gray-600" />
                     </Link>
                   )}
@@ -152,7 +154,7 @@ const RecipeView = ({ recipe }) => {
                 <div className="mt-4">
                   <ul className="space-y-2">
                     <li>
-                      <Link href={`/recipes/${recipe._id}/edit`} className="text-blue-500 hover:underline">Edit Recipe</Link>
+                      <Link href={`${recipeUrl}/edit`} className="text-blue-500 hover:underline">Edit Recipe</Link>
                     </li>
                     <li>
                       <button className="text-blue-500 hover:underline" onClick={handlePhotoUpload}>Upload New Photo</button>

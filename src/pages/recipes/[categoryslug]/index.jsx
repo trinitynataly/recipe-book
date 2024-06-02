@@ -3,23 +3,28 @@ import Head from 'next/head';
 import Layout from "@/components/layout/layout";
 import RecipeTable from "@/components/recipes/recipetable";
 import apiRequest from '@/lib/apiRequest';
+import { useRouter } from 'next/router';
+import categories from '@/data/categories.json';
 
-const Dinner = ({ recipes, pagination }) => {
-  const { currentPage, totalPages } = pagination;
+const RecipeCategory = ({ recipes, pagination }) => {
+  const router = useRouter();
+  const { categoryslug } = router.query;
+  const category = categories.find(cat => cat.slug === categoryslug);
+  const categoryTitle = category ? category.name : 'Recipes';
 
   return (
     <Fragment>
       <Head>
-        <title>Dinner Recipes | Recipe Book</title>
-        <meta name="description" content="Dinner Recipes" />
+        <title>{categoryTitle} Recipes | Recipe Book</title>
+        <meta name="description" content={`${categoryTitle} Recipes`} />
       </Head>
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <RecipeTable
-            title="Dinner Recipes"
+            title={`${categoryTitle} Recipes`}
             recipes={recipes}
-            page={currentPage}
-            totalPages={totalPages}
+            page={pagination.currentPage}
+            totalPages={pagination.totalPages}
           />
         </div>
       </Layout>
@@ -28,13 +33,22 @@ const Dinner = ({ recipes, pagination }) => {
 };
 
 export const getServerSideProps = async (context) => {
+  const { categoryslug } = context.params;
   const page = parseInt(context.query.page) || 1;
+  const category = categories.find(cat => cat.slug === categoryslug);
+  
+  if (!category) {
+    return {
+      notFound: true,
+    };
+  }
+  
   let recipes = [];
   let pagination = {};
   let data = {
-    type: 'dinner',
+    type: category.name,
     page,
-  }
+  };
 
   try {
     const response = await apiRequest(`recipes`, 'GET', data, context);
@@ -54,4 +68,4 @@ export const getServerSideProps = async (context) => {
   };
 };
 
-export default Dinner;
+export default RecipeCategory;

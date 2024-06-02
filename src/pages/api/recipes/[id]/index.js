@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         case 'GET':
             // Fetch a recipe by ID
             try {
-                const recipe = await Recipe.findById(recipeId).populate('tags');
+                const recipe = await Recipe.findOne({slug: recipeId}).populate('tags');
                 if (!recipe) {
                     return res.status(404).json({ success: false, message: 'Recipe not found' });
                 }
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         
                 if (userId) {
                     // Check if the recipe is in the user's favorites
-                    const favorite = await Favorite.findOne({ userID: userId, recipeID: recipeId });
+                    const favorite = await Favorite.findOne({ userID: userId, recipeID: recipe._id });
                     isFavorite = !!favorite;
                 }
 
