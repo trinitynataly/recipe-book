@@ -1,4 +1,4 @@
-// context/BlogContext.js
+
 import { createContext, useContext, useState } from 'react';
 
 const BlogContext = createContext();

@@ -1,9 +1,23 @@
-import { useState, useEffect } from 'react';
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 02/06/2024
+A layout component for the application with sidebar, top bar, and footer.
+*/
+
+// Import the Fragment, useState and useEffect hooks from React
+import { Fragment, useState, useEffect } from 'react';
+// Import PropTypes library for function argument validation
+import PropTypes from 'prop-types';
+// Import the useSession hook from NextAuth for session management
 import { useSession } from 'next-auth/react';
+// Import the useBlog hook from the BlogContext for blog data
 import { useBlog } from '@/context/BlogContext';
+// Import the Sidebar, TopBar, and Footer components
 import Sidebar from './sidebar';
 import TopBar from './topbar';
 import Footer from './footer';
+// Import the icons for the sidebar menu items
 import BreakfastIcon from '../../../public/icons/brekfast.svg';
 import LunchIcon from '../../../public/icons/lunch.svg';
 import DinnerIcon from '../../../public/icons/dinner.svg';
@@ -14,86 +28,139 @@ import HeartIcon from '../../../public/icons/heart.svg';
 import InfoIcon from '../../../public/icons/info.svg';
 import ExitIcon from '../../../public/icons/exit.svg';
 
+/**
+ * Layout component to wrap the application with sidebar, top bar, and footer.
+ * Layout component properties:
+ * @param children: the child components to render
+ * @returns the application layout with sidebar, top bar, and footer
+ */
 function Layout({ children }) {
-    const { data: session, status } = useSession();
-    const loading = status === 'loading';
-    const user = loading ? null : session?.user;
-    const [isDarkMode, setIsDarkMode] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-    const { categories } = useBlog();
+  // Get the session data and status from the useSession hook
+  const { data: session, status } = useSession();
+  // Check if the session is loading
+  const loading = status === 'loading';
+  // Get the user data from the session or set it to null
+  const user = loading ? null : session?.user;
+  // Define the state for dark mode and mobile view
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Define the state for mobile view
+  const [isMobile, setIsMobile] = useState(false);
+  // Get the blog categories from the useBlog hook
+  const { categories } = useBlog();
 
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth <= 800) {
-                setIsMobile(true);
-            } else {
-                setIsMobile(false);
-            }
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    useEffect(() => {
-        const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
-            setIsDarkMode(true);
-            document.documentElement.classList.add('dark');
-        } else {
-            setIsDarkMode(false);
-            document.documentElement.classList.remove('dark');
-        }
-    }, []);
-
-    const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
-        if (isDarkMode) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        }
+  // Hook to handle window resize events
+  useEffect(() => {
+    // Function to handle the window resize event
+    const handleResize = () => {
+      // Check if the window width is less than or equal to 800 pixels
+      if (window.innerWidth <= 800) {
+        // Set the mobile view state to true
+        setIsMobile(true);
+      } else {
+        // Set the mobile view state to false
+        setIsMobile(false);
+      }
     };
+    // Call the handleResize function on component mount
+    handleResize();
+    // Add an event listener for the window resize event
+    window.addEventListener('resize', handleResize);
+    // Remove the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    const blogSubMenu = categories?.map((category) => ({
-        text: category.title,
-        href: `/blog/${category.slug}`,
-        icon: <BookIcon />, // Replace with appropriate icons if available
-      }));
+  // Hook to handle dark mode theme
+  useEffect(() => {
+    // Get the theme from local storage
+    const theme = localStorage.getItem('theme');
+    // Check if the theme is dark
+    if (theme === 'dark') {
+      // Set the dark mode state to true
+      setIsDarkMode(true);
+      // Add the dark mode class to the document
+      document.documentElement.classList.add('dark');
+    } else {
+      // Set the dark mode state to false
+      setIsDarkMode(false);
+      // Remove the dark mode class from the document
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
-    const menuItems = [
-        {
-            text: 'All Recipes',
-            href: '/',
-            icon: <DashboardIcon />,
-            submenu: [
-                { text: 'Breakfast', href: '/recipes/breakfast', icon: <BreakfastIcon /> },
-                { text: 'Lunch', href: '/recipes/lunch', icon: <LunchIcon /> },
-                { text: 'Dinner', href: '/recipes/dinner', icon: <DinnerIcon /> },
-                { text: 'Snacks', href: '/recipes/snacks', icon: <SnacksIcon /> },
-            ],
-        },
-        user && { text: 'My Favourites', href: '/recipes/favorites', icon: <HeartIcon /> },
-        { text: 'Blog', href: '/blog', icon: <BookIcon />, submenu: blogSubMenu },
-        { text: 'About', href: '/about', icon: <InfoIcon /> },
-        user && { text: 'Sign Out', href: '/logout', icon: <ExitIcon /> },
-    ].filter(Boolean); // Filter out null items
+  // Function to toggle the dark mode theme
+  const toggleTheme = () => {
+    // Toggle the dark mode state
+    setIsDarkMode(!isDarkMode);
+    // Check if dark mode is enabled
+    if (isDarkMode) {
+      // Remove the dark mode class from the document
+      document.documentElement.classList.remove('dark');
+      // Set the theme to light in local storage
+      localStorage.setItem('theme', 'light');
+    } else {
+      // Add the dark mode class to the document
+      document.documentElement.classList.add('dark');
+      // Set the theme to dark in local storage
+      localStorage.setItem('theme', 'dark');
+    }
+  };
 
-    return (
-        <div className={`flex min-h-screen ${isMobile ? 'flex-col' : 'flex-row'}`}>
-            <Sidebar items={menuItems} isMobile={isMobile} />
-            <div className={`flex-1 flex flex-col ${isMobile ? '' : 'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
-                <TopBar onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-                <main className="flex-1 overflow-auto p-4 bg-backgroundEnd dark:bg-darkBackgroundEnd text-foreground dark:text-foreground">
-                    {children}
-                </main>
-                <Footer />
-            </div>
+  // Generate the blog submenu items for the sidebar
+  const blogSubMenu = categories?.map((category) => ({ // Check if categories exist
+    text: category.title, // Set the text to the category title
+    href: `/blog/${category.slug}`, // Set the href to the category slug
+    icon: <BookIcon />, // Set the icon to the book icon
+  }));
+
+  // Define the sidebar menu items
+  const menuItems = [
+    { // Dashboard menu item
+      text: 'All Recipes', // Set the text to All Recipes
+      href: '/', // Set the href to the root path
+      icon: <DashboardIcon />, // Set the icon to the dashboard icon
+      submenu: [ // Define the submenu items
+        { text: 'Breakfast', href: '/recipes/breakfast', icon: <BreakfastIcon /> }, // Breakfast submenu item
+        { text: 'Lunch', href: '/recipes/lunch', icon: <LunchIcon /> }, // Lunch submenu item
+        { text: 'Dinner', href: '/recipes/dinner', icon: <DinnerIcon /> }, // Dinner submenu item
+        { text: 'Snacks', href: '/recipes/snacks', icon: <SnacksIcon /> }, // Snacks submenu item
+      ],
+    },
+    // Check if the user is logged in and add the My Favourites menu item
+    user && { text: 'My Favourites', href: '/recipes/favorites', icon: <HeartIcon /> },
+    // Blog menu item with submenu
+    { text: 'Blog', href: '/blog', icon: <BookIcon />, submenu: blogSubMenu },
+    // About menu item
+    { text: 'About', href: '/about', icon: <InfoIcon /> },
+    // Sign In or Sign Out menu item based on user session
+    user && { text: 'Sign Out', href: '/logout', icon: <ExitIcon /> },
+  ].filter(Boolean); // Filter out null item
+
+  // Return the application layout with sidebar, top bar, and footer
+  return (
+    <Fragment>
+      {/* Main div with check for isMobile */}
+      <div className={`flex min-h-screen ${isMobile ? 'flex-col' : 'flex-row'}`}>
+        {/* Sidebar component with menu items */}
+        <Sidebar items={menuItems} isMobile={isMobile} />
+        {/* Main content div */}
+        <div className={`flex-1 flex flex-col ${isMobile ? '' : 'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
+          {/* TopBar component with dark mode toggle */}  
+          <TopBar onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+          {/* Main content div with children */}
+          <main className="flex-1 overflow-auto p-4 bg-backgroundEnd dark:bg-darkBackgroundEnd text-foreground dark:text-foreground">
+            {children}
+          </main>
+          <Footer />
         </div>
-    );
+      </div>
+    </Fragment>
+  );
 }
 
+// Validate the function arguments
+Layout.propTypes = {
+  children: PropTypes.node.isRequired, // The child components
+};
+
+// Export the Layout component
 export default Layout;
