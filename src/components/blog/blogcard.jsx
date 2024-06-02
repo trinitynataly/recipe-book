@@ -7,7 +7,7 @@ const BlogCard = ({ post }) => {
   const postUrl = `/blog/${post.category.slug}/${post.slug}`;
 
   return (
-    <div className="border rounded-lg overflow-hidden shadow-lg relative">
+    <div className="border dark:border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
       <Link href={postUrl} className="block w-full h-48 relative">
         {post.picture ? (
           <Image

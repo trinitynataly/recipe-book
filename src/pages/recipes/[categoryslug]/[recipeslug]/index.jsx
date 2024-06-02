@@ -1,24 +1,21 @@
 import { Fragment } from "react";
 import Head from 'next/head';
+import Layout from "@/components/layout/layout";
 import apiRequest from '@/lib/apiRequest';
 import RecipeView from "@/components/recipes/recipeview";
 import { slugify } from "@/lib/utils";
-import Error404 from "@/pages/404";
 
-const RecipePage = ({ recipe, error }) => {
-  if (error) {
-    return <Error404 />;
-  }
-
-  const RecipeTitle = recipe.title;
+const RecipePage = ({ recipe }) => {
 
   return (
     <Fragment>
       <Head>
-        <title>{RecipeTitle} | Recipe Book</title>
+        <title>{recipe.title} | Recipe Book</title>
         <meta name="description" content="View detailed information about a recipe" />
       </Head>
-      <RecipeView recipe={recipe} />
+      <Layout>
+        <RecipeView recipe={recipe} />
+      </Layout>
     </Fragment>
   );
 };
@@ -28,10 +25,7 @@ export const getServerSideProps = async (context) => {
 
   if (!recipeslug) {
     return {
-      props: {
-        recipe: null,
-        error: true,
-      },
+      notFound: true,
     };
   }
 
@@ -51,24 +45,17 @@ export const getServerSideProps = async (context) => {
         return {
           props: {
             recipe: response.data,
-            error: false,
           },
         };
       }
     } else {
       return {
-        props: {
-          recipe: null,
-          error: true,
-        },
+        notFound: true,
       };
     }
   } catch (error) {
     return {
-      props: {
-        recipe: null,
-        error: true,
-      },
+      notFound: true,
     };
   }
 };

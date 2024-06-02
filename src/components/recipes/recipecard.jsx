@@ -71,7 +71,7 @@ const RecipeCard = ({ recipe }) => {
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden shadow-lg relative">
+    <div className="border dark:border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
       <Link href={recipeUrl} className="block w-full h-48 relative">
       <Image
           src={getPhotoUrl()}

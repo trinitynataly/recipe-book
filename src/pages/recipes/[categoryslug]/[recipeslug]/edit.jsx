@@ -24,7 +24,7 @@ const EditRecipePage = ({ recipe, error }) => {
         try {
             const response = await apiRequest(`recipes/${recipe._id}`, 'PUT', formData);
             if (response.success) {
-                router.push(`/recipes/${response.data._id}`);
+              router.push(`/recipes/${slugify(response.data.type)}/${response.data.slug}`);
                 showToast('Success', 'Recipe updated successfully', 'confirm');
             } else {
                 showToast('Error', response.message, 'error');

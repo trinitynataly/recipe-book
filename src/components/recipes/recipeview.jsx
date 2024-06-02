@@ -1,12 +1,11 @@
 import { Fragment, useState } from "react";
-import Layout from "@/components/layout/layout";
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
 import { usePhotoUpload } from '@/context/PhotoUploadContext';
-import { slugify } from '@/lib/utils';
+import { slugify, humanReadableTime } from '@/lib/utils';
 import apiRequest from '@/lib/apiRequest';
 import PhotoStub from '../../../public/photo-stub.jpg';
 import CameraIcon from '../../../public/icons/camera.svg';
@@ -90,11 +89,9 @@ const RecipeView = ({ recipe }) => {
 
   if (!recipe) {
     return (
-      <Layout>
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold">Loading...</h1>
         </div>
-      </Layout>
     );
   }
 
@@ -104,12 +101,11 @@ const RecipeView = ({ recipe }) => {
   
   return (
     <Fragment>
-      <Layout>
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold mb-4">{title}</h1>
           <div className="grid grid-cols-4 gap-6">
             <div className="col-span-3">
-              <div className="relative w-full h-64 mb-4 border rounded-lg shadow-lg overflow-hidden">
+              <div className="relative w-full h-96 mb-4 border rounded-lg shadow-lg overflow-hidden">
                 <Image
                   src={getPhotoUrl()}
                   alt={title}
@@ -139,13 +135,15 @@ const RecipeView = ({ recipe }) => {
                 </div>
               </div>
               <p className="mb-4">{description}</p>
-              <h2 className="text-2xl font-bold mb-2">Ingredients</h2>
-              <div className="mb-4" dangerouslySetInnerHTML={{ __html: ingredients }}></div>
-              <h2 className="text-2xl font-bold mb-2">Instructions</h2>
-              <div className="mb-4" dangerouslySetInnerHTML={{ __html: instructions }}></div>
+              <hr className="my-4"></hr>
+              <h2 className="text-2xl font-bold mb-4">Ingredients</h2>
+              <div className="mb-4 prose max-w-none" dangerouslySetInnerHTML={{ __html: ingredients }}></div>
+              <hr className="my-4"></hr>
+              <h2 className="text-2xl font-bold mb-4">Instructions</h2>
+              <div className="mb-4 prose max-w-none" dangerouslySetInnerHTML={{ __html: instructions }}></div>
             </div>
             <div className="col-span-1">
-              <p><strong>Cook Time:</strong> {cook_time} minutes</p>
+              <p><strong>Cook Time:</strong> {humanReadableTime(cook_time)}</p>
               <p><strong>Type:</strong> {type}</p>
               {tags && <p><strong>Tags:</strong> #{tags}</p>}
               <p><strong>Author:</strong> {author.name}</p>
@@ -157,13 +155,13 @@ const RecipeView = ({ recipe }) => {
                 <div className="mt-4">
                   <ul className="space-y-2">
                     <li>
-                      <Link href={`${recipeUrl}/edit`} className="text-blue-500 hover:underline">Edit Recipe</Link>
+                      <Link href={`${recipeUrl}/edit`} className="text-primary  hover:text-tertiary">Edit Recipe</Link>
                     </li>
                     <li>
-                      <button className="text-blue-500 hover:underline" onClick={handlePhotoUpload}>Upload New Photo</button>
+                      <button className="text-primary hover:text-tertiary" onClick={handlePhotoUpload}>Upload New Photo</button>
                     </li>
                     <li>
-                      <button className="text-red-500 hover:underline" onClick={handleDeleteRecipe}>Delete Recipe</button>
+                      <button className="text-white bg-tertiary px-4 py-1 rounded-md hover:bg-primary" onClick={handleDeleteRecipe}>Delete Recipe</button>
                     </li>
                   </ul>
                 </div>
@@ -171,7 +169,6 @@ const RecipeView = ({ recipe }) => {
             </div>
           </div>
         </div>
-      </Layout>
     </Fragment>
   );
 };

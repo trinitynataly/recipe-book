@@ -61,6 +61,7 @@ export const GET_POST_BY_SLUG = `
         slug
       }
       body
+      _firstPublishedAt
     }
   }
 `;

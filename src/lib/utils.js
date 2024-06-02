@@ -63,5 +63,32 @@ const stripHtml = (html, maxLength = 200) => {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
+  // Define a function to convert minutes to a human-readable time format
+  function humanReadableTime(minutes) {
+    /**
+     * Function to convert minutes to a human-readable time format
+     * @param minutes - The number of minutes to convert
+     * 
+     * @returns {string} - The human-readable time format
+     */
+    if (minutes < 0) {
+      throw new Error('Minutes cannot be negative');
+    }
+  
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+  
+    if (hours > 0) {
+      if (remainingMinutes > 0) {
+        return `${hours} hours ${remainingMinutes} minutes`;
+      } else {
+        return `${hours} hours`;
+      }
+    } else {
+      return `${minutes} minutes`;
+    }
+  }
+  
+
 // Export the utility functions
-export { slugify, generateUniqueSlug, stripHtml }
+export { slugify, generateUniqueSlug, stripHtml, humanReadableTime }
