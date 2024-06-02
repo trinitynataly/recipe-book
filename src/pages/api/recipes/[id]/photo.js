@@ -52,11 +52,10 @@ const handler = async (req, res) => {
                     const finalKey = `public/${finalFileName}`;
 
                     const uploadParams = {
-                        Bucket: process.env.S3_BUCKET_NAME,
+                        Bucket: process.env.AWS_BUCKET_NAME,
                         Key: finalKey,
                         Body: req.file.buffer, // Use buffer to upload directly to S3
-                        ContentType: req.file.mimetype,
-                        ACL: 'public-read'
+                        ContentType: req.file.mimetype
                     };
 
                     const uploadResult = await s3.upload(uploadParams).promise();
@@ -84,7 +83,7 @@ const handler = async (req, res) => {
             if (recipe.photo) {
                 if (process.env.STORAGE_METHOD === 's3') {
                     const deleteParams = {
-                        Bucket: process.env.S3_BUCKET_NAME,
+                        Bucket: process.env.AWS_BUCKET_NAME,
                         Key: `public/${recipe.photo}`
                     };
 
