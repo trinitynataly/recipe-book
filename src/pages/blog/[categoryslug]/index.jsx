@@ -7,7 +7,6 @@ import BlogTable from '@/components/blog/blogtable';
 const POSTS_PER_PAGE = 12;
 
 const CategoryPage = ({ category, initialPosts, totalPosts }) => {
-  console.log(initialPosts);
   const [posts, setPosts] = useState(initialPosts);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(Math.ceil(totalPosts / POSTS_PER_PAGE));

@@ -24,14 +24,10 @@ const handler = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Recipe not found' });
         }
 
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-        if (!fs.existsSync(uploadsDir)) {
-            fs.mkdirSync(uploadsDir, { recursive: true });
-        }
-
         if (!req.user) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
+        
         if (!req.user.isAdmin && recipe.authorID.toString() !== req.user.id.toString()) {
             return res.status(403).json({ success: false, message: 'Not authorized to update this recipe' }); 
         }
