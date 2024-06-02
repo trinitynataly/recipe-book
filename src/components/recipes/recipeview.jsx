@@ -23,6 +23,18 @@ const RecipeView = ({ recipe }) => {
   const { showToast } = useToast();
   const { openUpload } = usePhotoUpload();
   const recipeUrl = `/recipes/${slugify(recipe.type)}/${recipe.slug}`;
+  const STORAGE_METHOD = process.env.NEXT_PUBLIC_STORAGE_METHOD;
+  const s3BucketUrl = process.env.NEXT_PUBLIC_S3_BUCKET_URL; 
+
+  const getPhotoUrl = () => {
+    if (!photo) {
+      return PhotoStub;
+    }
+    if (STORAGE_METHOD === 's3') {
+      return `${s3BucketUrl}/public/${photo}`;
+    }
+    return `/uploads/${photo}`;
+  };
 
   const onUploadSuccess = (updatedRecipe) => {
     setPhoto(updatedRecipe.photo);
@@ -98,21 +110,12 @@ const RecipeView = ({ recipe }) => {
           <div className="grid grid-cols-4 gap-6">
             <div className="col-span-3">
               <div className="relative w-full h-64 mb-4 border rounded-lg shadow-lg overflow-hidden">
-                {photo ? (
-                  <Image
-                    src={`/uploads/${photo}`}
-                    alt={title}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                ) : (
-                  <Image
-                    src={PhotoStub}
-                    alt={title}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                )}
+                <Image
+                  src={getPhotoUrl()}
+                  alt={title}
+                  layout="fill"
+                  objectFit="cover"
+                />
                 <div className="absolute top-2 right-2 flex space-x-2">
                   {isAuthorOrAdmin && (
                     <button className="bg-white p-2 rounded-full shadow-md" onClick={handlePhotoUpload}>
