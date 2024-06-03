@@ -95,81 +95,91 @@ const RecipeView = ({ recipe }) => {
     );
   }
 
-  const { title, description, ingredients, instructions, cook_time, type, author, createdAt, updatedAt } = recipe;
+  const { title, description, ingredients, instructions, cook_time, type, author, createdAt, updatedAt, slug } = recipe;
   const tags = recipe?.tags ? recipe.tags.map(tag => tag.name).join(', #') : '';
   const isAuthorOrAdmin = user && (user.isAdmin || user.id === recipe.authorID);
   
   return (
-    <Fragment>
+      <Fragment>
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-4">{title}</h1>
-          <div className="grid grid-cols-4 gap-6">
-            <div className="col-span-3">
+          <h1 className="text-3xl font-bold mb-0">{title}</h1>
+          <div className="text-lg mb-4">
+            <Link href="/">Recipe Book</Link> / <Link href={`/recipes/${slugify(type)}`}>{type}</Link>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
               <div className="relative w-full h-96 mb-4 border rounded-lg shadow-lg overflow-hidden">
                 <Image
-                  src={getPhotoUrl()}
-                  alt={title}
-                  layout="fill"
-                  objectFit="cover"
+                    src={getPhotoUrl()}
+                    alt={title}
+                    layout="fill"
+                    objectFit="cover"
                 />
                 <div className="absolute top-2 right-2 flex space-x-2">
                   {isAuthorOrAdmin && (
-                    <button className="bg-white p-2 rounded-full shadow-md" onClick={handlePhotoUpload}>
-                      <CameraIcon className="w-6 h-6 text-gray-600" />
-                    </button>
+                      <button className="bg-white p-2 rounded-full shadow-md" onClick={handlePhotoUpload}>
+                        <CameraIcon className="w-6 h-6 text-gray-600"/>
+                      </button>
                   )}
                   {isAuthorOrAdmin && (
-                    <Link href={`${recipeUrl}/edit`} className="bg-white p-2 rounded-full shadow-md">
-                      <PencilIcon className="w-6 h-6 text-gray-600" />
-                    </Link>
+                      <Link href={`${recipeUrl}/edit`} className="bg-white p-2 rounded-full shadow-md">
+                        <PencilIcon className="w-6 h-6 text-gray-600"/>
+                      </Link>
                   )}
                   {user && (
-                    <button className="bg-white p-2 rounded-full shadow-md" onClick={handleToggleFavorite}>
-                      {isFavourite ? (
-                        <HeartFullIcon className="w-6 h-6 text-red-500" />
-                      ) : (
-                        <HeartIcon className="w-6 h-6 text-red-500" />
-                      )}
-                    </button>
+                      <button className="bg-white p-2 rounded-full shadow-md" onClick={handleToggleFavorite}>
+                        {isFavourite ? (
+                            <HeartFullIcon className="w-6 h-6 text-red-500"/>
+                        ) : (
+                            <HeartIcon className="w-6 h-6 text-red-500"/>
+                        )}
+                      </button>
                   )}
                 </div>
               </div>
               <p className="mb-4">{description}</p>
               <hr className="my-4"></hr>
               <h2 className="text-2xl font-bold mb-4">Ingredients</h2>
-              <div className="mb-4 prose max-w-none" dangerouslySetInnerHTML={{ __html: ingredients }}></div>
+              <div className="mb-4 prose max-w-none" dangerouslySetInnerHTML={{__html: ingredients}}></div>
               <hr className="my-4"></hr>
               <h2 className="text-2xl font-bold mb-4">Instructions</h2>
-              <div className="mb-4 prose max-w-none" dangerouslySetInnerHTML={{ __html: instructions }}></div>
+              <div className="mb-4 prose max-w-none" dangerouslySetInnerHTML={{__html: instructions}}></div>
             </div>
-            <div className="col-span-1">
+            <div className="lg:col-span-1">
               <p><strong>Cook Time:</strong> {humanReadableTime(cook_time)}</p>
-              <p><strong>Type:</strong> {type}</p>
+              <p><strong>Type:</strong> <Link href={`/recipes/${slugify(type)}`}>{type}</Link></p>
               {tags && <p><strong>Tags:</strong> #{tags}</p>}
               <p><strong>Author:</strong> {author.name}</p>
               <p><strong>Created At:</strong> {format(new Date(createdAt), 'MM/dd/yyyy')}</p>
               <p><strong>Updated At:</strong> {format(new Date(updatedAt), 'MM/dd/yyyy')}</p>
-              <hr style={{ margin: "1em 0" }}></hr>
-
               {isAuthorOrAdmin && (
-                <div className="mt-4">
-                  <ul className="space-y-2">
-                    <li>
-                      <Link href={`${recipeUrl}/edit`} className="text-primary  hover:text-tertiary">Edit Recipe</Link>
-                    </li>
-                    <li>
-                      <button className="text-primary hover:text-tertiary" onClick={handlePhotoUpload}>Upload New Photo</button>
-                    </li>
-                    <li>
-                      <button className="text-white bg-tertiary px-4 py-1 rounded-md hover:bg-primary" onClick={handleDeleteRecipe}>Delete Recipe</button>
-                    </li>
-                  </ul>
-                </div>
+                  <Fragment>
+                    <hr style={{margin: "1em 0"}}></hr>
+                    <div className="mt-4">
+                      <ul className="space-y-2">
+                        <li>
+                          <Link href={`${recipeUrl}/edit`} className="text-primary  hover:text-tertiary">Edit
+                            Recipe
+                          </Link>
+                        </li>
+                        <li>
+                          <button className="text-primary hover:text-tertiary" onClick={handlePhotoUpload}>Upload New
+                            Photo
+                          </button>
+                        </li>
+                        <li>
+                          <button className="text-white bg-tertiary px-4 py-1 rounded-md hover:bg-primary"
+                                  onClick={handleDeleteRecipe}>Delete Recipe
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </Fragment>
               )}
             </div>
           </div>
         </div>
-    </Fragment>
+      </Fragment>
   );
 };
 

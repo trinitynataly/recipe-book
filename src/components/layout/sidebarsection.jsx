@@ -82,7 +82,7 @@ function SidebarSection({ icon, text, submenu, href }) {
       <li className={`sidebar-row group flex flex-col items-start py-2 px-3 my-1 rounded-md hover:bg-red-700 transition-colors cursor-pointer  ${getParentStyle(href)}`}>
         {/* Sidebar item with icon and text */}
         <Link href={href?href:"#"} passHref className="w-full sidebar-item">
-          <SidebarItem icon={icon} text={text} submenu={submenu} isOpen={isOpen} toggleSubmenu={toggleSubmenu} />
+          <SidebarItem icon={icon} text={text} submenu={submenu && submenu.length > 0} isOpen={isOpen} toggleSubmenu={toggleSubmenu} />
         </Link>
         {/* Submenu items */}
         {isOpen && submenu && ( // Check if the submenu items exist and the submenu is open

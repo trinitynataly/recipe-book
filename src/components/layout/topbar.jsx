@@ -65,7 +65,7 @@ const TopBar = ({ onToggleTheme, isDarkMode }) => {
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search Recipes"
-            className="p-2 rounded-l border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-0.5 focus:ring-primary focus:border-gray-600"
+            className="p-2 rounded-l border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-0.5 focus:ring-primary focus:border-gray-600 w-full"
           />
           {/* Search button for recipes */}
           <button type="submit" className="p-2 bg-gray-400 text-white rounded-r border border-gray-400 dark:bg-gray-800 dark:border-gray-700 dark:text-white hover:bg-gray-600">
@@ -73,15 +73,15 @@ const TopBar = ({ onToggleTheme, isDarkMode }) => {
           </button>
         </form>
         {/* Buttons */}
-        <div className="flex items-center">
+        <div className="flex items-center flex-nowrap">
           {user ? (
             // New Recipe button for authenticated users
-            <Link href="/recipes/new" className="ml-4 bg-primary hover:bg-tertiary text-white px-4 py-2 rounded">
+            <Link href="/recipes/new" className="ml-4 bg-primary hover:bg-tertiary text-white px-4 py-2 rounded text-nowrap">
               + New Recipe
             </Link>
           ) : (
             // Sign In button for unauthenticated users
-            <Link href="/login" className="ml-4 bg-primary hover:bg-tertiary text-white px-4 py-2 rounded">
+            <Link href="/login" className="ml-4 bg-primary hover:bg-tertiary text-white px-4 py-2 rounded text-nowrap">
               Sign In
             </Link>
           )}

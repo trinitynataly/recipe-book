@@ -1,119 +1,197 @@
+/*
+Version: 1.4
+Last edited by: Natalia Pakhomova
+Last edit date: 02/06/2024
+A recipe card component for displaying recipe details.
+*/
+
+// Import the Fragment component from React
+import { Fragment } from 'react';
+// Import PropTypes library for function argument validation
+import PropTypes from 'prop-types';
+// Import the Image component from Next.js for image optimization
 import Image from 'next/image';
+// Import the Link component from Next.js for client-side navigation
 import Link from 'next/link';
+// Import the useState hook from React
 import { useState } from 'react';
+// Import the useSession hook from NextAuth for session management
 import { useSession } from 'next-auth/react';
+// Import the useToast hook from the ToastContext for displaying notifications
 import { useToast } from '@/context/ToastContext';
+// Import the usePhotoUpload hook from the PhotoUploadContext for photo upload
 import { usePhotoUpload } from '@/context/PhotoUploadContext';
+// Import the slugify function from the utils library for URL generation
 import { slugify } from '@/lib/utils';
+// Import the apiRequest function from the apiRequest library for API calls
 import apiRequest from '@/lib/apiRequest';
+// Import the CameraIcon, PencilIcon, HeartIcon, and HeartFullIcon from the icons library
 import CameraIcon from '../../../public/icons/camera.svg';
 import PencilIcon from '../../../public/icons/pencil.svg';
 import HeartIcon from '../../../public/icons/heart.svg';
 import HeartFullIcon from '../../../public/icons/heart-full.svg';
 import PhotoStub from '../../../public/photo-stub.jpg';
 
+/**
+ * RecipeCard component to display the recipe details with photo, title, description, and type.
+ * RecipeCard component properties:
+ * @param recipe: the recipe object with photo, title, description, and type
+ * @returns the recipe card with photo, title, description, and type
+ */
 const RecipeCard = ({ recipe }) => {
+  // Get the session object for user authentication
   const { data: session, status } = useSession();
+  // Define the loading state based on the session status
   const loading = status === 'loading';
+  // Get the user object based on the session status
   const user = loading ? null : session?.user;
-  const { showToast } = useToast(); // Get the showToast function from ToastContext
-  const { openUpload } = usePhotoUpload(); // Get the openUpload function from PhotoUploadContext
+  // Get the showToast function from ToastContext
+  const { showToast } = useToast();
+  // Get the openUpload function from PhotoUploadContext
+  const { openUpload } = usePhotoUpload();
+  // Check if the user is the author or admin
   const isAuthorOrAdmin = user && (user.isAdmin || user.id === recipe.authorID);
-  const [isFavourite, setIsFavourite] = useState(recipe.favorite); // Assume recipe has an `isFavourite` property
-  const [photo, setPhoto] = useState(recipe.photo); // Assume recipe has a `photo` property
+  // Define the state for the favorite status
+  const [isFavourite, setIsFavourite] = useState(recipe.favorite);
+  // Define the state for the photo URL
+  const [photo, setPhoto] = useState(recipe.photo);
+  // Generate the recipe URL based on the type and slug
   const recipeUrl = `/recipes/${slugify(recipe.type)}/${recipe.slug}`;
+  // Get the storage method and S3 bucket URL from environment variables
   const STORAGE_METHOD = process.env.NEXT_PUBLIC_STORAGE_METHOD;
+  // Define the S3 bucket URL for photo storage from environment variables
   const s3BucketUrl = process.env.NEXT_PUBLIC_S3_BUCKET_URL; 
 
+  // Function to get the photo URL based on the storage method
   const getPhotoUrl = () => {
+    // Check if the photo exists
     if (!photo) {
+      // Return the photo stub image if the photo is missing
       return PhotoStub;
     }
+    // Check if the storage method is S3
     if (STORAGE_METHOD === 's3') {
+      // Return the S3 bucket URL with the photo path
       return `${s3BucketUrl}/public/${photo}`;
     }
+    // Return the local photo path if the storage method is local
     return `/uploads/${photo}`;
   };
 
+  // Function to handle the photo upload success
   const onUploadSuccess = (updatedRecipe) => {
+    // Update the photo and show the success notification
     setPhoto(updatedRecipe.photo);
+    // Show the success notification for photo upload
     showToast('Success', 'Photo uploaded successfully', 'confirm');
   };
 
+  // Function to handle the photo upload error
   const onUploadError = (error) => {
+    // Show the error notification for photo upload
     showToast('Upload Error', error, 'error');
   };
 
+  // Function to handle the photo upload
   const handlePhotoUpload = () => {
-    openUpload(recipe._id, onUploadSuccess, onUploadError); // Pass the recipe ID
+    // Open the photo upload modal with the recipe ID, success, and error callbacks
+    openUpload(recipe._id, onUploadSuccess, onUploadError);
   };
 
+  // Function to handle the toggle favorite status
   const handleToggleFavorite = async () => {
     if (!user) return; // User must be logged in to toggle favorite
 
+    // Toggle the favorite status for the recipe
     try {
+      // Send a POST request to the API to toggle the favorite status
       const { success, favorite } = await apiRequest(`recipes/${recipe._id}/favorite`, 'POST');
-      if (!success) {
+      if (!success) { // Show error notification if the request fails
         showToast('Error', 'Failed to toggle favorite status', 'error');
         return;
-      } else {
-        if (favorite) {
+      } else { // Show success notification and update the favorite status
+        if (favorite) { // If the recipe is added to favorites
+          // Show the success notification for adding to favorites
           showToast('Success', 'Added to favorites', 'confirm');
+          // Update the favorite status to true
           setIsFavourite(true);
         } else {
+          // Show the success notification for removing from favorites
           showToast('Success', 'Removed from favorites', 'confirm');
+          // Update the favorite status to false
           setIsFavourite(false);
         }
       }
-    } catch (error) {
+    } catch (error) { // Show error notification if the request fails
       console.error('Failed to toggle favorite status:', error);
     }
   };
 
+  // Return the recipe card with photo, title, description, and type
   return (
-    <div className="border dark:border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
-      <Link href={recipeUrl} className="block w-full h-48 relative">
-      <Image
-          src={getPhotoUrl()}
-          alt={recipe.title}
-          fill
-          style={{ objectFit: 'cover' }}
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-        />
-      </Link>
-      <div className="absolute top-2 right-2 flex space-x-2">
-        {isAuthorOrAdmin && (
-          <button className="bg-white p-2 rounded-full shadow-md" onClick={handlePhotoUpload}>
-            <CameraIcon className="w-6 h-6 text-gray-600" />
-          </button>
-        )}
-        {isAuthorOrAdmin && (
-          <Link href={`${recipeUrl}/edit`} className="bg-white p-2 rounded-full shadow-md">
-            <PencilIcon className="w-6 h-6 text-gray-600" />
-          </Link>
-        )}
-        {user && (
-          <button className="bg-white p-2 rounded-full shadow-md" onClick={handleToggleFavorite}>
-            {isFavourite ? (
-              <HeartFullIcon className="w-6 h-6 text-red-500" />
-            ) : (
-              <HeartIcon className="w-6 h-6 text-red-500" />
-            )}
-          </button>
-        )}
-      </div>
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-2">
-          <Link href={recipeUrl}>{recipe.title}</Link>
-        </h2>
-        <p className="text-gray-700">{recipe.description}</p>
-        <p className="text-gray-600 mt-2">Type: {recipe.type}</p>
-        <Link href={recipeUrl} className="mt-4 bg-gray-200 hover:bg-tertiary text-gray-600 hover:text-white px-4 py-2 rounded inline-block">
-          Start To Cook
+    <Fragment>
+      {/* Recipe card with photo, title, description, and type */}
+      <div className="border dark:border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
+        {/* Recipe photo with Link */}
+        <Link href={recipeUrl} className="block w-full h-48 relative">
+          <Image
+            src={getPhotoUrl()}
+            alt={recipe.title}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+          />
         </Link>
+        {/* Action buttons for photo upload, edit, and favorite */}
+        <div className="absolute top-2 right-2 flex space-x-2">
+          {/* Check if the user is the author or admin */}
+          {isAuthorOrAdmin && (
+            <Fragment>
+              {/* Upload new photo button */}
+              <button className="bg-white p-2 rounded-full shadow-md" onClick={handlePhotoUpload}>
+                <CameraIcon className="w-6 h-6 text-gray-600" />
+              </button>
+              {/* Edit recipe button */}
+              <Link href={`${recipeUrl}/edit`} className="bg-white p-2 rounded-full shadow-md">
+                <PencilIcon className="w-6 h-6 text-gray-600" />
+              </Link>
+            </Fragment>
+          )}
+          {/* Favorite button for authenticated users */}
+          {user && (
+            <button className="bg-white p-2 rounded-full shadow-md" onClick={handleToggleFavorite}>
+              {isFavourite ? ( // Show full heart icon if the recipe is a favorite
+                <HeartFullIcon className="w-6 h-6 text-red-500" />
+              ) : ( // Show empty heart icon if the recipe is not a favorite
+                <HeartIcon className="w-6 h-6 text-red-500" />
+              )}
+            </button>
+          )}
+        </div>
+        {/* Recipe details block */}
+        <div className="p-4">
+          {/* Recipe title with Link */}
+          <h2 className="text-xl font-bold mb-2">
+            <Link href={recipeUrl}>{recipe.title}</Link>
+          </h2>
+          {/* Recipe description */}
+          <p className="text-gray-700">{recipe.description}</p>
+          {/* Recipe type */}
+          <p className="text-gray-600 mt-2">Type: {recipe.type}</p>
+          {/* Start cooking button with Link */}
+          <Link href={recipeUrl} className="mt-4 bg-gray-200 hover:bg-tertiary text-gray-600 hover:text-white px-4 py-2 rounded inline-block">
+            Start To Cook
+          </Link>
+        </div>
       </div>
-    </div>
+    </Fragment>
   );
 };
 
+// Validate the RecipeCard component properties
+RecipeCard.propTypes = {
+  recipe: PropTypes.object.isRequired, // Recipe object with photo, title, description, and type
+};
+
+// Export the RecipeCard component
 export default RecipeCard;

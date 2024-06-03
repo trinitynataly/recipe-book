@@ -48,7 +48,7 @@ function Sidebar({ items, isMobile }) {
   return (
     <Fragment>
       {/* Sidebar menu block */}
-      <aside id="sidebar" className={`bg-sidebarBg dark:bg-darkSidebarBg text-sidebarText ${isMobile ? 'relative h-16 w-screen' : 'fixed top-0 left-0 w-80 h-screen overflow-y-auto h-screen'}`}>
+      <aside id="sidebar" className={`bg-sidebarBg dark:bg-darkSidebarBg text-sidebarText ${isMobile ? 'relative h-16' : 'fixed top-0 left-0 w-80 h-screen overflow-y-auto'}`}>
         {/* Navigation menu */}
         <nav className={`${isMobile ? 'flex-row justify-between items-center' : 'flex-col h-full justify-between items-center'}`}>
           {/* Logo block */}
