@@ -11,17 +11,16 @@ import { Fragment } from 'react';
 import PropTypes from 'prop-types';
 // Import the IoIosArrowForward icon from React Icons for the submenu arrow
 import {IoIosArrowForward} from "react-icons/io";
-// Import the styles module for the sidebar item
-import styles from '../../styles/scss/components/layout/sidebaritem.module.scss';
 
 /**
  * SidebarItem component to display the icon and text of the menu item.
  * SidebarItem component properties:
- * @param icon: the icon component for the menu item
- * @param text: the text for the menu item
- * @param submenu: the flag to indicate submenu items
- * @param isOpen: the flag to indicate open submenu
- * @param toggleSubmenu: the function to toggle submenu visibility
+ * @param {element} icon - the icon component for the menu item
+ * @param {string} text - the text for the menu item
+ * @param {boolean} submenu - the flag to indicate submenu items
+ * @param {boolean} isOpen - the flag to indicate open submenu
+ * @param {function} toggleSubmenu - the function to toggle submenu visibility
+ * @returns {JSX.Element} - the menu item with icon and text
  */
 const SidebarItem = ({ icon, text, submenu, isOpen, toggleSubmenu }) => {
   // Return the sidebar item with icon and text
@@ -30,7 +29,7 @@ const SidebarItem = ({ icon, text, submenu, isOpen, toggleSubmenu }) => {
       {/* Sidebar item with icon and text */}
       <span className="sidebar-item flex items-center w-full justify-between">
         {/* Icon container with icon */}
-        <span className={`icon-container ${styles.iconStyle}`}>
+        <span className={`icon-container`}>
           {icon}
         </span>
         {/* Text container with text */}

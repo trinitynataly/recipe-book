@@ -19,10 +19,10 @@ import 'react-quill/dist/quill.snow.css';
 /**
  * RecipeForm component to create and update recipes with title, description, ingredients, cook time, instructions, tags, and type.
  * RecipeForm component properties:
- * @param onSubmit: the function to submit the recipe form
- * @param initialData: the initial recipe data for update
- * @param submitButtonText: the text for the submit button
- * @returns the recipe form with title, description, ingredients, cook time, instructions, tags, and type
+ * @param {function} onSubmit - the function to submit the recipe form
+ * @param {object} initialData - the initial recipe data for update
+ * @param {string} submitButtonText - the text for the submit button
+ * @returns {JSX.Element} - the recipe form with title, description, ingredients, cook time, instructions, tags, and type
  */
 const RecipeForm = ({ onSubmit, initialData = {}, submitButtonText = 'Submit' }) => {
   // Define the state for the title
@@ -32,7 +32,7 @@ const RecipeForm = ({ onSubmit, initialData = {}, submitButtonText = 'Submit' })
   // Define the state for the ingredients
   const [ingredients, setIngredients] = useState(initialData.ingredients ? initialData.ingredients : '');
   // Define the state for the cook time
-  const [cookTime, setCookTime] = useState(initialData.cook_time || '');
+  const [cookTime, setCookTime] = useState(initialData.cook_time || 0);
   // Define the state for the instructions
   const [instructions, setInstructions] = useState(initialData.instructions || '');
   // Define the state for the tags
@@ -93,7 +93,7 @@ const RecipeForm = ({ onSubmit, initialData = {}, submitButtonText = 'Submit' })
         </div>
         {/* Type select field */}
         <div className="mb-4">
-        {/* Label for the type select field */}  
+        {/* Label for the type select field */}
           <label htmlFor="type" className="block text-gray-700">Type</label>
           {/* Select field for the type */}
           <select

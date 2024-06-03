@@ -1,7 +1,7 @@
 /*
-Version: 1.2
+Version: 1.3
 Last edited by: Natalia Pakhomova
-Last edit date: 2/06/2024
+Last edit date: 03/06/2024
 A middleware function to handle file uploads using Multer.
 */
 
@@ -11,7 +11,7 @@ import multer from 'multer';
 // Set up the storage engine for file uploads using memory storage
 const storage = multer.memoryStorage();
 
-// Create a multer instance with the storage engine and file filter
+// Create a new Multer instance with the storage engine
 const upload = multer({
   storage: storage, // Use the memory storage engine
   fileFilter: function (req, file, cb) { // Set the file filter

@@ -1,7 +1,7 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 16/05/2024
+Last edit date: 03/06/2024
 A context provider for managing toast notifications.
 */
 
@@ -13,7 +13,11 @@ import Toast from '@/components/layout/toast';
 // Create a new context for the toast notifications
 const ToastContext = createContext();
 
-// Create a new provider component for the toast notifications
+/**
+ * ToastProvider component to manage toast notifications.
+ * @param children - the child components
+ * @returns {JSX.Element} - the provider component for managing toast notifications
+ */
 export const ToastProvider = ({ children }) => {
   // Define the state variable for the toast message
   const [toast, setToast] = useState(null);
@@ -38,7 +42,4 @@ export const ToastProvider = ({ children }) => {
 };
 
 // Define a custom hook to use the toast context
-export const useToast = () => {
-  // Return the context value
-  return useContext(ToastContext);
-};
+export const useToast = () => useContext(ToastContext);

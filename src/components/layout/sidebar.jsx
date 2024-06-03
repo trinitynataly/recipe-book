@@ -21,9 +21,9 @@ import SidebarSection from './sidebarsection';
 /**
  * Sidebar component to display the application navigation menu.
  * Sidebar component properties:
- * @param items: the list of menu items
- * @param isMobile: the flag to indicate mobile view
- * @returns the application sidebar with navigation menu
+ * @param {array} items - the list of menu items
+ * @param {boolean} isMobile - the flag to indicate mobile view
+ * @returns {JSX.Element} - the application navigation menu
  */ 
 function Sidebar({ items, isMobile }) {
   // Define the state for the menu visibility

@@ -31,8 +31,8 @@ import ExitIcon from '../../../public/icons/exit.svg';
 /**
  * Layout component to wrap the application with sidebar, top bar, and footer.
  * Layout component properties:
- * @param children: the child components to render
- * @returns the application layout with sidebar, top bar, and footer
+ * @param {array} children - the child components
+ * @returns {JSX.Element} - the application layout with sidebar, top bar, and footer
  */
 function Layout({ children }) {
   // Get the session data and status from the useSession hook

@@ -12,8 +12,7 @@ import Link from 'next/link';
 
 /**
  * Footer component to display the copyright notice and privacy policy link.
- * Footer component properties:
- * @returns a footer with the copyright notice and privacy policy link
+ * @returns {JSX.Element} - the footer with the copyright notice and privacy policy link
  */
 const Footer = () => {
   // Return the footer

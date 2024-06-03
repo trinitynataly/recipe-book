@@ -19,11 +19,11 @@ import SidebarItem from './sidebaritem';
 /**
  * SidebarSection component to display the menu section with icon, text, and submenu items.
  * SidebarSection component properties:
- * @param icon: the icon component for the menu section
- * @param text: the text for the menu section
- * @param submenu: the list of submenu items
- * @param href: the link for the menu section
- * @returns the menu section with icon, text, and submenu items
+ * @param {element} icon - the icon component for the menu section
+ * @param {string} text - the text for the menu section
+ * @param {array} submenu - the list of submenu items
+ * @param {string} href - the link for the menu section
+ * @returns {JSX.Element} - the menu section with icon, text, and submenu items
  */
 function SidebarSection({ icon, text, submenu, href }) {
   // Get the router object for routing

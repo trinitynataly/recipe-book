@@ -1,10 +1,22 @@
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 03/06/2024
+Main stylesheet for the project
+*/
+
+// Importing abstract statements
 @use "abstracts/index" as *;
+// Importing base statements
 @use "base/base";
+// Importing components statements
 @use "base/sidebar";
 
+// Quill editor additional styles
 .quill {
     display: flex;
     flex-direction: column;
+    // Quill editor container styles to ensure it fits inside parent container
     .ql-container {
         flex: 1 1 auto;
         height: auto;

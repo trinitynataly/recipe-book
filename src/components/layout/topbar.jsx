@@ -23,9 +23,9 @@ import styles from '../../styles/scss/components/layout/topbar.module.scss';
 /**
  * TopBar component to display the top navigation bar with search and theme toggle.
  * TopBar component properties:
- * @param onToggleTheme: the function to toggle the theme
- * @param isDarkMode: the flag to indicate dark mode
- * @returns the top navigation bar with search and theme toggle
+ * @param {function} onToggleTheme - the function to toggle the theme
+ * @param {boolean} isDarkMode - the flag to indicate dark mode
+ * @returns {JSX.Element} - the top navigation bar with search and theme toggle
  */
 const TopBar = ({ onToggleTheme, isDarkMode }) => {
   // Define the state for the search query

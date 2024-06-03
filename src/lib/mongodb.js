@@ -1,7 +1,7 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 12/04/2024
+Last edit date: 02/06/2024
 A helper function to connect to the MongoDB database.
 */
 
@@ -26,7 +26,10 @@ if (!cached) {
     cached = global.mongooseConn = { conn: null, promise: null };
 }
 
-// Export the function to connect to the MongoDB database
+/**
+ * Function to establish a connection to the MongoDB database or return the cached connection.
+ * @returns {Promise<*>}
+ */
 async function dbConnect() {
     // Check if the MongoDB connection is already cached
     if (cached.conn) {

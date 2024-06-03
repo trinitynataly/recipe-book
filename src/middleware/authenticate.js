@@ -1,22 +1,23 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 29/05/2024
+Last edit date: 03/06/2024
 A helper function to authenticate the user session in the API routes.
 */
 
-// Import the getSession function from next-auth/react
+// Import the authOptions object from the next-auth configuration
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+// Import the getServerSession function from next-auth/next
 import { getServerSession } from "next-auth/next";
 
-// Define the authenticate middleware function
+/**
+ * Middleware function to authenticate the user session in the API routes and add the user to the request object.
+ * @param req - the request object
+ * @param res - the response object
+ * @returns {void}
+ */
 const authenticate = async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
-    /*
-    Authenticate the user session in the API routes.
-    Parameters:
-    - req: the request object from the API route
-    */
     // Get the user session from the request
     if (session) {
         // If yes, set the user in the request object

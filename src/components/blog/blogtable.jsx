@@ -17,13 +17,13 @@ import Link from 'next/link';
 import BlogCard from './blogcard';
 
 /**
-   * BlogTable component to display a list of blog posts with pagination controls.
-   * BlogTable component properties:
-   * @param posts: the list of blog posts
-   * @param page: the current page number
-   * @param totalPages: the total number of pages
-   * @returns a table view of the blog posts with pagination controls
-   */
+ * BlogTable component to display a list of blog posts with pagination controls.
+ * BlogTable component properties:
+ * @param {array} posts - the list of blog posts
+ * @param {number} page - the current page number
+ * @param {number} totalPages - the total number of pages
+ * @returns {JSX.Element} - the blog post table with pagination controls
+ */
 const BlogTable = ({ posts, page = 1, totalPages = 1 }) => {
   
   // Get the router object for client-side navigation
@@ -96,8 +96,8 @@ const BlogTable = ({ posts, page = 1, totalPages = 1 }) => {
 // Validate the function arguments
 BlogTable.propTypes = {
   posts: PropTypes.array.isRequired, // The list of blog posts
-  page: PropTypes.number.isRequired, // The current page number
-  totalPages: PropTypes.number.isRequired // The total number of pages
+  page: PropTypes.number, // The current page number (default is 1)
+  totalPages: PropTypes.number // The total number of pages (default is 1)
 };
 
 // Export the BlogTable component

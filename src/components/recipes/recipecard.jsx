@@ -35,8 +35,8 @@ import PhotoStub from '../../../public/photo-stub.jpg';
 /**
  * RecipeCard component to display the recipe details with photo, title, description, and type.
  * RecipeCard component properties:
- * @param recipe: the recipe object with photo, title, description, and type
- * @returns the recipe card with photo, title, description, and type
+ * @param {object} recipe - the recipe object with photo, title, description, and type
+ * @returns {JSX.Element} - the recipe card with photo, title, description, and type
  */
 const RecipeCard = ({ recipe }) => {
   // Get the session object for user authentication

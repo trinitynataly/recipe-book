@@ -19,8 +19,8 @@ import { format } from 'date-fns';
 /**
  * BlogView component to display a single blog post with title, image, category, and body.
  * BlogView component properties:
- * @param post: the blog post object
- * @returns a view of the blog post
+ * @param {object} post - the blog post object
+ * @returns {JSX.Element} - the blog post view with title, image, category, and body
  */
 const BlogView = ({ post }) => {
   // Return the blog post view

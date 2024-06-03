@@ -1,7 +1,7 @@
 /*
-Version: 1.6
+Version: 1.7
 Last edited by: Natalia Pakhomova
-Last edit date: 29/05/2024
+Last edit date: 03/06/2024
 A set of helper functions for hashing and verifying passwords, generating and verifying JWT tokens.
 */
 
@@ -10,7 +10,11 @@ import jwt from 'jsonwebtoken';
 // Import the Bcrypt library for password hashing and verification
 import bcrypt from 'bcryptjs';
 
-// Hash the user password using Bcrypt
+/**
+ * Hash the user password with a salt and pepper.
+ * @param {string} password - the user password to hash
+ * @returns {Promise<*>} - the hashed password
+ */
 const hashPassword = async (password) => {
     // Generate a salt for the password hash
     const salt = await bcrypt.genSalt(10);
@@ -18,13 +22,22 @@ const hashPassword = async (password) => {
     return await bcrypt.hash(password + process.env.PEPPER, salt);
 };
 
-// Verify the user password against the stored hash
+/**
+ * Verify the user password with the hash and pepper.
+ * @param {string} password - the user password to verify
+ * @param {string} hash - the hashed password to compare
+ * @returns {Promise<*>} - the result of the password verification
+ */
 const verifyPassword = async (password, hash) => {
     // Compare the password with the hash and pepper
     return await bcrypt.compare(password + process.env.PEPPER, hash);
 };
 
-// Verify the JWT token and return the decoded payload
+/**
+ * Verify the JWT token with the secret.
+ * @param {string} token - the JWT token to verify
+ * @returns {boolean|object} - the verified token payload or false if invalid
+ */
 const verifyToken = (token) => {
     // Attempt to decode and verify the token
     try {
@@ -50,17 +63,25 @@ const verifyToken = (token) => {
     }
 };
 
-// Decode the JWT token and return the payload without verification
+/**
+ * Decode the JWT token and return the payload.
+ * @param {string} token - the JWT token to decode
+ * @returns {object} - the decoded token payload
+ */
 const decodeToken = (token) => {
     // Decode the token and return the payload
     return jwt.decode(token);
 };
 
-// Generate JWT access and refresh tokens for the user
+/**
+ * Generate access and refresh tokens for the user.
+ * @param {object} user - the user object to generate tokens for
+ * @returns {{access_token: string, refresh_token: string}} - the generated tokens
+ */
 const generateTokens = (user) => {
     // Generate an access token with a short expiry time
     const accessToken = jwt.sign(
-        { 
+        {
             tokenType: "access_token", // Token type
             user: { _id: user._id } // User ID
         },
@@ -69,7 +90,7 @@ const generateTokens = (user) => {
     );
     // Generate a refresh token with a long expiry time
     const refreshToken = jwt.sign(
-        { 
+        {
             tokenType: "refresh_token",  // Token type
             user: { _id: user._id } // User ID
         },

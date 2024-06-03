@@ -8,87 +8,89 @@ Utility functions for the application.
 // Import the html-to-text package
 import { htmlToText } from 'html-to-text';
 
-// Define a function to generate a slug from a title
+/**
+ * Function to generate a slug from a title
+ * @param {string} title - The title to convert to a slug
+ * @returns {string} - The generated slug
+ */
 const slugify = (title) => {
-    /**
-     * Function to generate a slug from a title
-     * @param title - The title to convert to a slug
-     * 
-     * @returns {string} - The generated slug
-     */
-    // Convert the title to a slug and return it
-    return title
-      .toLowerCase() // Convert to lowercase
-      .trim() // Trim leading and trailing whitespace
-      .replace(/[\s\W-]+/g, '-') // Replace spaces and non-word characters with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with a single hyphen
-      .replace(/^-+|-+$/g, ''); // Remove leading and trailing hyphens
+  // Convert the title to a slug and return it
+  return title
+    .toLowerCase() // Convert to lowercase
+    .trim() // Trim leading and trailing whitespace
+    .replace(/[\s\W-]+/g, '-') // Replace spaces and non-word characters with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with a single hyphen
+    .replace(/^-+|-+$/g, ''); // Remove leading and trailing hyphens
 }
 
-// Define a function to generate a unique slug
+/**
+ * Function to ensure a generated slug is unique
+ * @param {Model} model - The Mongoose model to query for existing slugs
+ * @param {string} baseSlug - The base slug to use
+ * @param {number} suffix - The suffix to append to the base slug
+ * @param {string} currentId - The ID of the current recipe (to exclude from the query)
+ * @returns {string} - The unique slug
+ */
 const generateUniqueSlug = async (model, baseSlug, suffix = 0, currentId = null) => {
-    /**
-     * Function to generate a unique slug for a recipe
-     * @param model - The Mongoose model to use
-     * @param baseSlug - The base slug to use
-     * @param suffix - The suffix to append to the base slug (default is 0 for the first attempt)
-     * @param currentId - The current recipe ID to exclude from the search (default is null)
-     * 
-     * @returns {string} - The unique slug
-     */
-    const slug = suffix === 0 ? baseSlug : `${baseSlug}-${suffix}`;
-    const existingSlug = await model.findOne({ slug, _id: { $ne: currentId } });
-    if (!existingSlug) {
-        return slug;
-    }
-    return generateUniqueSlug(model, baseSlug, suffix + 1, currentId);
+  // Generate the full slug with the suffix
+  const slug = suffix === 0 ? baseSlug : `${baseSlug}-${suffix}`;
+  // Check if a document with the slug already exists
+  const existingSlug = await model.findOne({ slug, _id: { $ne: currentId } });
+  // If the slug is unique, return it
+  if (!existingSlug) return slug;
+  // If the slug is not unique, generate a new slug with an incremented suffix
+  return generateUniqueSlug(model, baseSlug, suffix + 1, currentId);
 }
 
-// Define a function to strip HTML tags from a string and truncate it to a given length
+/**
+ * Function to strip HTML tags from a string and truncate it to a given length
+ * @param {string} html - The HTML string to strip and truncate
+ * @param {number} maxLength - The maximum length of the string
+ * @returns {string} - The stripped and truncated string
+ */
 const stripHtml = (html, maxLength = 200) => {
-    /**
-     * Function to strip HTML tags from a string and truncate it to a given length
-     * @param html - The HTML string to strip tags from
-     * @param maxLength - The maximum length of the string to return (default is 200)
-     * 
-     * @returns {string} - The stripped and truncated string
-     */
-    // Convert the HTML to plain text
-    const text = htmlToText(html, {
-        wordwrap: false, // Disable word wrapping
-        ignoreHref: true, // Ignore links
-        ignoreImage: true, // Ignore images
-      });
-    // Return the text content truncated to the maximum length
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-  };
+  // Convert the HTML to plain text
+  const text = htmlToText(html, {
+    wordwrap: false, // Disable word wrapping
+    ignoreHref: true, // Ignore links
+    ignoreImage: true, // Ignore images
+  });
+  // Return the text content truncated to the maximum length
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+};
 
-  // Define a function to convert minutes to a human-readable time format
+/**
+ * Function to convert minutes to a human-readable time format
+ * @param {number} minutes - The number of minutes
+ * @returns {string} - The human-readable time format
+ */
   function humanReadableTime(minutes) {
-    /**
-     * Function to convert minutes to a human-readable time format
-     * @param minutes - The number of minutes to convert
-     * 
-     * @returns {string} - The human-readable time format
-     */
+    // Check if the minutes are negative
     if (minutes < 0) {
-      throw new Error('Minutes cannot be negative');
+      // Return an error message
+      return '0 minutes';
     }
-  
+
+    // Calculate the hours and remaining minutes
     const hours = Math.floor(minutes / 60);
+    // Calculate the remaining minutes
     const remainingMinutes = minutes % 60;
-  
-    if (hours > 0) {
+
+    // Return the formatted time string
+    if (hours > 0) { // If there are hours
+      // Check if there are remaining minutes
       if (remainingMinutes > 0) {
+        // Return the formatted time string with hours and minutes
         return `${hours} hours ${remainingMinutes} minutes`;
       } else {
+        // Return the formatted time string with hours only
         return `${hours} hours`;
       }
     } else {
+      // Return the formatted time string with minutes only
       return `${minutes} minutes`;
     }
   }
   
-
 // Export the utility functions
 export { slugify, generateUniqueSlug, stripHtml, humanReadableTime }

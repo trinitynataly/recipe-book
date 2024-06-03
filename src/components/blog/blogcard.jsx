@@ -16,13 +16,12 @@ import Image from 'next/image';
 // Import the stripHtml function from the utils library
 import { stripHtml } from '@/lib/utils';
 
-// Define the BlogCard component
+/**
+ * BlogCard component properties:
+ * @param {object} post - the blog post object
+ * @returns {JSX.Element} - the blog post card with title, image, and excerpt
+ */
 const BlogCard = ({ post }) => {
-  /**
-   * BlogCard component properties:
-   * @param post: the blog post object
-   * @returns a card view of the blog post
-   */
 
   // Generate the URL for the blog post
   const postUrl = `/blog/${post.category.slug}/${post.slug}`;

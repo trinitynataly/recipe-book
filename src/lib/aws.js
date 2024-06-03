@@ -2,7 +2,7 @@
 Version: 1.0
 Last edited by: Natalia Pakhomova
 Last edit date: 02/06/2024
-A utility function to set up the AWS S3 client.
+A helper function to set up the AWS S3 client.
 */
 
 // Import the AWS SDK

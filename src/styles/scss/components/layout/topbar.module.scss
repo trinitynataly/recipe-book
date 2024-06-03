@@ -1,23 +1,32 @@
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 03/06/2024
+Topbar item component styles
+*/
+
+// Animation for the sparkle effect
 @keyframes sparkle {
-    0%, 100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.5;
-      transform: scale(1.2);
-    }
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  .sparkle {
-    animation: sparkle 1s infinite alternate;
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
   }
-  
-  .sparkleSun {
-    color: #FFD700; /* Gold color for sun */
-  }
-  
-  .sparkleMoon {
-    color: #505050; /* Light Steel Blue color for moon */
-  }
-  
+}
+
+// Sparkle effect for the sun and moon icons
+.sparkle {
+  animation: sparkle 1s infinite alternate;
+}
+
+// Sun and moon icon colors
+.sparkleSun {
+  color: #FFD700; /* Gold color for sun */
+}
+
+.sparkleMoon {
+  color: #505050; /* Light Steel Blue color for moon */
+}

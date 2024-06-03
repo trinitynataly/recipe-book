@@ -1,20 +1,40 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import Head from 'next/head';
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 03/06/2024
+Privacy Policy page for Recipe Book App
+*/
+
+// Import the Fragment component from React
 import { Fragment } from "react";
-import Link from "next/link";
+// Import the Image component from Next.js for images
+import Image from "next/image";
+// Import the Head component from Next.js for SEO
+import Head from 'next/head';
+// Import the Layout component for the page layout
 import Layout from "@/components/layout/layout";
 
-const PrivacyPolicyPage = () => {
+/**
+ * PrivacyPolicyPage component to display the privacy policy.
+ * @returns {JSX.Element}
+ */
+export default function PrivacyPolicyPage() {
+  // Return the privacy policy page view
   return (
     <Fragment>
+      {/* Head component for SEO */}
       <Head>
+        {/* Page title */}
         <title>Privacy Policy | Recipe Book</title>
+        {/* Page meta description */}
         <meta name="description" content="Privacy Policy for Recipe Book App" />
       </Head>
+      {/* Layout wrapper */}
       <Layout>
+        {/* Privacy policy container */}
         <div className="container mx-auto px-4 py-8">
           <div className="w-full mb-8">
+            {/* Privacy policy image */}
             <div className="relative w-full h-80 md:h-96 lg:h-96 xl:h-96 2xl:h-96 mb-4">  
               <Image 
                 src="/privacy_policy.jpg" 
@@ -25,7 +45,9 @@ const PrivacyPolicyPage = () => {
               />
             </div>
           </div>
+          {/* Privacy policy title */}
           <h1 className="text-3xl font-bold mb-4 text-gray-700">Privacy Policy</h1>
+          {/* Privacy policy content */}
           <div className="text-gray-600 leading-relaxed">
             <p className="mb-4">
               Recipe Book is committed to providing quality services to you, and this policy outlines our ongoing obligations to you in respect of how we manage your Personal Information.
@@ -126,5 +148,3 @@ const PrivacyPolicyPage = () => {
     </Fragment>
   )
 }
-
-export default PrivacyPolicyPage;

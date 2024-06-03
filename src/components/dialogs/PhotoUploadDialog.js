@@ -15,11 +15,11 @@ import apiRequest from '@/lib/apiRequest';
 /**
  * PhotoUploadDialog component to upload a photo to a recipe.
  * PhotoUploadDialog component properties:
- * @param recipeId: the ID of the recipe to upload the photo to
- * @param onClose: the function to close the dialog
- * @param onUploadSuccess: the function to call on successful photo upload
- * @param onUploadError: the function to call on photo upload error
- * @returns a dialog for uploading a photo to a recipe
+ * @param {string} recipeId - the ID of the recipe to upload the photo to
+ * @param {function} onClose - the function to close the dialog
+ * @param {function} onUploadSuccess - the function to call on successful photo upload
+ * @param {function} onUploadError - the function to call on photo upload error
+ * @returns {JSX.Element} - a dialog for uploading a photo to a recipe
  */
 const PhotoUploadDialog = ({ recipeId, onClose, onUploadSuccess, onUploadError }) => {
   // Define the file state to store the selected photo

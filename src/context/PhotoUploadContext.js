@@ -1,7 +1,7 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 20/05/2024
+Last edit date: 03/06/2024
 A context provider for managing the photo upload dialog state.
 */
 
@@ -13,7 +13,11 @@ import PhotoUploadDialog from '@/components/dialogs/PhotoUploadDialog';
 // Create a new context for the photo upload dialog
 const PhotoUploadContext = createContext();
 
-// Create a new provider component for the photo upload dialog
+/**
+ * PhotoUploadProvider component to manage the photo upload dialog state.
+ * @param children - the child components
+ * @returns {JSX.Element} - the provider component for managing the photo upload dialog state
+ */
 export const PhotoUploadProvider = ({ children }) => {
   // Define the state variables for the dialog
   const [isOpen, setIsOpen] = useState(false);
@@ -52,6 +56,4 @@ export const PhotoUploadProvider = ({ children }) => {
 };
 
 // Define a custom hook to use the photo upload context
-export const usePhotoUpload = () => {
-  return useContext(PhotoUploadContext); // Return the context value
-};
+export const usePhotoUpload = () => useContext(PhotoUploadContext);

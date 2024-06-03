@@ -1,9 +1,21 @@
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 03/06/2024
+Base colours and styles for the project
+*/
+
+// Importing abstract statements
 @use "../abstracts/index" as *;
 
+// Import Tailwind base styles
 @tailwind base;
+// Import Tailwind components styles
 @tailwind components;
+// Import Tailwind utilities styles
 @tailwind utilities;
 
+// Define base colours
 :root {
   --foreground-rgb: #{$light-foreground};
   --background-start-rgb: #{$light-background-start};
@@ -23,6 +35,7 @@
   --dark-sidebar-text: #{$dark-sidebar-text};
 }
 
+// Define body styles
 body {
   background-color: var(--background-end-rgb);
   font-family: $font-family;
@@ -31,12 +44,14 @@ body {
   color: var(--foreground-rgb);
 }
 
+// Define utility classes
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
 
+// Define link styles
 a {
   color: inherit;
   text-decoration: none;

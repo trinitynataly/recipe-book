@@ -13,10 +13,10 @@ import PropTypes from 'prop-types';
 /**
  * Toast component to display the notification message with title and text.
  * Toast component properties:
- * @param title: the title of the notification message
- * @param text: the text of the notification message
- * @param type: the type of the notification message (confirm, warn, error)
- * @returns the notification message with title and text
+ * @param {string} title - the title of the notification message
+ * @param {string} text - the text of the notification message
+ * @param {string} type - the type of the notification message
+ * @returns {JSX.Element} - the notification message with title and text
  */
 
 const Toast = ({ title, text, type }) => {

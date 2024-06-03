@@ -1,10 +1,24 @@
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 03/06/2024
+Sidebar item component styles
+*/
+
+// Import abstract statements
 @use "../abstracts/index" as *;
 
+// Define sidebar item styles
 .sidebar-row {
     .sidebar-item {
         &:hover {        
             color: #{$secondary-color} !important;
             
         }
+        .icon-container {
+            width: 18px;
+            height: 18px;
+        }
     }
 }
+

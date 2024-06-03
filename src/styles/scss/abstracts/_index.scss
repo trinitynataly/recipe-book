@@ -1,1 +1,9 @@
-@forward 'variables'; // Import variables from _variables.scss and forward them to the _index.scss file
+/*
+Version: 1.1
+Last edited by: Natalia Pakhomova
+Last edit date: 03/06/2024
+Abstracts index file
+*/
+
+// Import variables from _variables.scss and forward them to the _index.scss file
+@forward 'variables';

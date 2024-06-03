@@ -1,20 +1,39 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import Head from 'next/head';
+/*
+Version: 1.0
+Last edited by: Natalia Pakhomova
+Last edit date: 27/05/2024
+About page for the Recipe Book app
+*/
+
+// Import the Fragment component from React
 import { Fragment } from "react";
-import Link from "next/link";
+// Import the Head component from Next.js for SEO
+import Head from 'next/head';
+// Import the Image component from Next.js
+import Image from "next/image";
+// Import the Layout component for the page layout
 import Layout from "@/components/layout/layout";
 
+/**
+ * AboutPage component to display the about page for the Recipe Book app.
+ * @returns {JSX.Element}
+ */
 const AboutPage = () => {
   return (
     <Fragment>
+      {/* Head component for SEO */}
       <Head>
+        {/* Page title */}
         <title>About | Recipe Book</title>
+        {/* Page meta description */}
         <meta name="description" content="Welcome to Recipe Book App" />
       </Head>
+      {/* Layout wrapper */}
       <Layout>
+        {/* About page container */}
         <div className="container mx-auto px-4 py-8">
           <div className="w-full mb-8">
+            {/* About page image */}
             <div className="relative w-full h-80 md:h-96 lg:h-96 xl:h-96 2xl:h-96 mb-4">  
               <Image 
                 src="/about.jpg" 
@@ -25,7 +44,9 @@ const AboutPage = () => {
               />
             </div>
           </div>
+          {/* About page title */}
           <h1 className="text-3xl font-bold mb-4 text-gray-700">About Recipe Book</h1>
+          {/* About page content */}
           <div className="text-gray-600 leading-relaxed">
             <p className="mb-4">
               Welcome to Recipe Book, your ultimate companion in the kitchen! Our app is designed to make cooking easier, more enjoyable, and more organized. Whether you&apos;re a seasoned chef or a kitchen novice, Recipe Book has something for everyone. From delicious breakfast ideas to hearty dinners, our app offers a wide variety of recipes to suit all tastes and dietary needs.
@@ -57,5 +78,5 @@ const AboutPage = () => {
     </Fragment>
   )
 }
-
+// Export the AboutPage component
 export default AboutPage;
