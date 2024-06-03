@@ -39,9 +39,10 @@ Recipe Book is a web application built with Next.js and React that allows users 
 3. Install dependencies:
    ```bash
    npm install
-# or
-yarn install
-```
+   # or
+   yarn install
+   ```
+
 
 4. Set up environment variables:
 
