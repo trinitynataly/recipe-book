@@ -99,13 +99,20 @@ function MyApp({ Component, pageProps, blogCategories }) {
 MyApp.getInitialProps = async (appContext) => {
   // Fetch the initial props from the App component
   const appProps = await App.getInitialProps(appContext);
-  // Fetch all categories from DatoCMS
-  const data = await fetchDatoCMS(GET_ALL_CATEGORIES);
-  // Get the blog categories from the fetched data
-  const blogCategories = data?.allCategories;
-  // Return the app props and blog categories
-  return { ...appProps, blogCategories };
+  // Check if the window object is not available (server-side rendering)
+  if (typeof window === 'undefined') {
+    // Fetch all categories from DatoCMS on server-side only
+    const data = await fetchDatoCMS(GET_ALL_CATEGORIES);
+    // Get the blog categories from the fetched data
+    const blogCategories = data?.allCategories;
+    // Return the app props and blog categories
+    return { ...appProps, blogCategories };
+  } else {
+    // Return the app props
+    return { ...appProps };
+  }
 };
+
 
 // Export the MyApp component
 export default MyApp;

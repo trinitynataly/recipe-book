@@ -140,6 +140,8 @@ const RecipeCard = ({ recipe }) => {
             fill
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+            priority={false}
+            quality={75}
           />
         </Link>
         {/* Action buttons for photo upload, edit, and favorite */}

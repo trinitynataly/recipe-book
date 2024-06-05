@@ -41,7 +41,9 @@ export default function PrivacyPolicyPage() {
                 alt="Privacy Policy for Recipe Book" 
                 layout="fill" 
                 objectFit="cover" 
-                className="rounded-md" 
+                className="rounded-md"
+                priority={false}
+                quality={75}
               />
             </div>
           </div>

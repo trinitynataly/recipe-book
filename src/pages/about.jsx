@@ -40,7 +40,9 @@ const AboutPage = () => {
                 alt="About Recipe Book" 
                 layout="fill" 
                 objectFit="cover" 
-                className="rounded-md" 
+                className="rounded-md"
+                priority={false}
+                quality={75}
               />
             </div>
           </div>

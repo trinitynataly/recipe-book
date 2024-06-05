@@ -186,6 +186,8 @@ const RecipeView = ({ recipe }) => {
                     alt={title}
                     layout="fill"
                     objectFit="cover"
+                    priority={false}
+                    quality={75}
                 />
                 {/* Action buttons for photo upload, edit, and favorite */}
                 <div className="absolute top-2 right-2 flex space-x-2">

@@ -47,6 +47,8 @@ const BlogView = ({ post }) => {
                   alt={post.title}
                   layout="fill"
                   objectFit="cover"
+                  priority={false}
+                  quality={75}
                 />
               </div>
             )}
