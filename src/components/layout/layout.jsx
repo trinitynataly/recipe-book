@@ -1,7 +1,7 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 02/06/2024
+Last edit date: 06/06/2024
 A layout component for the application with sidebar, top bar, and footer.
 */
 
@@ -43,31 +43,24 @@ function Layout({ children }) {
   const user = loading ? null : session?.user;
   // Define the state for dark mode and mobile view
   const [isDarkMode, setIsDarkMode] = useState(false);
-  // Define the state for mobile view
-  const [isMobile, setIsMobile] = useState(false);
+  // Define the state for mobile view, null by default for initial check
+  const [isMobile, setIsMobile] = useState(null);
   // Get the blog categories from the useBlog hook
   const { categories } = useBlog();
 
   // Hook to handle window resize events
   useEffect(() => {
-    // Function to handle the window resize event
+    // Function to handle window resize
     const handleResize = () => {
       // Check if the window width is less than or equal to 800 pixels
-      if (window.innerWidth <= 800) {
-        // Set the mobile view state to true
-        setIsMobile(true);
-      } else {
-        // Set the mobile view state to false
-        setIsMobile(false);
-      }
+      setIsMobile(window.innerWidth <= 800);
     };
-    // Call the handleResize function on component mount
-    handleResize();
-    // Add an event listener for the window resize event
+    handleResize(); // Initial check
+    // Add event listener for window resize
     window.addEventListener('resize', handleResize);
-    // Remove the event listener on component unmount
+    // Remove event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, []); // Empty dependency array for initial check
 
   // Hook to handle dark mode theme
   useEffect(() => {
@@ -135,6 +128,16 @@ function Layout({ children }) {
     user && { text: 'Sign Out', href: '/logout', icon: <ExitIcon /> },
   ].filter(Boolean); // Filter out null item
 
+  // Check if the mobile view is loading
+  if (isMobile === null) {
+    // Return a spinner loader while loading
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-800">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   // Return the application layout with sidebar, top bar, and footer
   return (
     <Fragment>
@@ -143,7 +146,7 @@ function Layout({ children }) {
         {/* Sidebar component with menu items */}
         <Sidebar items={menuItems} isMobile={isMobile} />
         {/* Main content div */}
-        <div className={`flex-1 flex flex-col ${isMobile ? '' : 'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${isMobile ? '' : 'ml-80'}`}> {/* Adjust margin-left to account for sidebar width */}
           {/* TopBar component with dark mode toggle */}  
           <TopBar onToggleTheme={toggleTheme} isDarkMode={isDarkMode} />
           {/* Main content div with children */}
