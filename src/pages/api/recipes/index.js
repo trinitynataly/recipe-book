@@ -32,43 +32,42 @@ export default async function handler(req, res) {
     // Fetch all recipes
     try {
       // Extract the query parameters
-      const {type, tag, favorite, page = 1, per_page = 12} = req.query;
+      const { type, tag, favorite, page = 1, per_page = 12 } = req.query;
       // Get the user ID if the user is logged in
       const userId = req.user ? req.user.id : null;
       // Create a query object
       let query = {};
 
-      // Filter by type
+      // Filter by type if type is provided
       if (type) {
-        // Use case-insensitive regex to match the type
-        query.type = {$regex: new RegExp(`^${type}$`, 'i')};
+        // Filter by type in a case-insensitive manner
+        query.type = { $regex: new RegExp(`^${type}$`, 'i') };
       }
 
-      // Filter by tag
+      // Filter by tag ID if tag is provided
       if (tag) {
-        // Find the tag by name and add it to the query
-        const tagDoc = await Tag.findOne({name: tag}).collation({locale: 'en', strength: 2});
-        // If the tag exists, add it to the query
+        // Find the tag by name in a case-insensitive manner
+        const tagDoc = await Tag.findOne({ name: tag }).collation({ locale: 'en', strength: 2 });
+        
+        // Check if the tag exists
         if (tagDoc) {
-          // Find recipes with the tag
+          // Filter by tag ID
           query.tags = tagDoc._id;
         }
       }
 
-      // Get the user's favorite recipe IDs
-      let userFavoriteRecipeIds = [];
-
-      // Check if the user is logged in
-      if (userId) {
-        // Fetch the user's favorite recipes if user is logged in
-        const userFavorites = await Favorite.find({userID: userId}).select('recipeID');
-        // Map the recipe IDs to strings
-        userFavoriteRecipeIds = userFavorites.map(fav => fav.recipeID.toString());
-
-        // Filter by favorite if needed
-        if (favorite) {
-          query._id = {$in: userFavoriteRecipeIds};
+      // Filter by favorite flag if needed
+      if (favorite) {
+        // return errror if user is not logged in
+        if (!userId) { 
+          return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
+        // Fetch the user's favorite recipes from the database
+        const userFavorites = await Favorite.find({ userID: userId }).select('recipeID');
+        // Get the recipe IDs from the favorite recipes
+        const userFavoriteRecipeIds = userFavorites.map(fav => fav.recipeID.toString());
+        // Filter by favorite recipes
+        query._id = { $in: userFavoriteRecipeIds };
       }
 
       // Get the page number
@@ -89,26 +88,10 @@ export default async function handler(req, res) {
       // Calculate the total number of pages
       const totalPages = Math.ceil(totalRecipes / perPageInt);
 
-      // Add favorite field to each recipe if user is logged in
-      const recipesWithFavorite = recipes.map(recipe => {
-        // Convert the recipe to a plain object
-        const recipeObject = recipe.toObject();
-        // Check if user ID exists
-        if (userId) {
-          // Check if the recipe ID is in the user's favorite recipes
-          recipeObject.favorite = userFavoriteRecipeIds.includes(recipeObject._id.toString());
-        } else {
-          // favourite field is false if user is not logged in
-          recipeObject.favorite = false;
-        }
-        // Return the updated recipe object
-        return recipeObject;
-      });
-
       // Send the response
       res.status(200).json({
         success: true, // Indicate success
-        data: recipesWithFavorite, // Send the recipes
+        data: recipes, // Send the recipes
         pagination: { // Send pagination data
           totalRecipes, // Total number of recipes
           totalPages, // Total number of pages
@@ -118,7 +101,7 @@ export default async function handler(req, res) {
       });
     } catch (error) { // Handle errors
       // Send an error response
-      res.status(500).json({success: false, message: error.message});
+      res.status(500).json({ success: false, message: error.message });
     }
   // Serve POST request to create a new recipe
   } else if (req.method === 'POST') {

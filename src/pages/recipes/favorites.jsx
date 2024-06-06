@@ -1,7 +1,7 @@
 /*
-Version: 1.3
+Version: 1.4
 Last edited by: Natalia Pakhomova
-Last edit date: 02/06/2024
+Last edit date: 06/06/2024
 Favorites page to display favourite recipes
 */
 
@@ -28,6 +28,12 @@ const Favorites = ({ recipes, pagination }) => {
   // Get the current page and total pages from the pagination object
   const { currentPage, totalPages } = pagination;
 
+  // Add the favorite flag to the recipes
+  const recipesWithFavorite = recipes.map(recipe => ({
+    ...recipe, // Spread the recipe object
+    favorite: true, // Add the favorite flag as true
+  }));
+
   // Return the favourites page view
   return (
     <Fragment>
@@ -45,7 +51,7 @@ const Favorites = ({ recipes, pagination }) => {
           {/* Recipe table */}
           <RecipeTable
             title="My Favourite Recipes"
-            recipes={recipes}
+            recipes={recipesWithFavorite}
             page={currentPage}
             totalPages={totalPages}
           />
@@ -71,14 +77,15 @@ export const getServerSideProps = async (context) => {
     currentPage: 1, // Current page number
     totalPages: 1, // Total number of pages
   };
-  // Initialize the data object with the page number for the API
+  // Initialize the data object
   let data = {
-    page,
+    page, // Set the page number
+    favorite: 1 // Set the favorite flag to 1
   }
 
   try {
     // Fetch the favourite recipes from the API
-    const response = await apiRequest(`recipes/favorites`, 'GET', data, context);
+    const response = await apiRequest(`recipes`, 'GET', data, context);
     // If the response is successful, set the recipes and pagination variables
     if (response.success) {
       recipes = response.data; // Set the recipes

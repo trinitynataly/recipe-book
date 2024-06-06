@@ -1,7 +1,7 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 02/06/2024
+Last edit date: 06/06/2024
 A toast component for the application layout displaying the notification message.
 */
 
@@ -65,10 +65,10 @@ const TopBar = ({ onToggleTheme, isDarkMode }) => {
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search Recipes"
-            className="p-2 rounded-l border border-gray-300 dark:border-gray-500 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-0.5 focus:ring-primary focus:border-gray-600 w-full"
+            className="p-2 rounded-l border border-gray-300 dark:border-gray-500 dark:bg-gray-600 dark:text-white focus:outline-none focus:ring-0.5 focus:ring-primary focus:border-gray-600 w-full"
           />
           {/* Search button for recipes */}
-          <button type="submit" className="p-2 bg-gray-400 text-white rounded-r border border-gray-400 dark:bg-gray-800 dark:border-gray-700 dark:text-white hover:bg-gray-600">
+          <button type="submit" className="px-4 py-2 bg-gray-600 text-white rounded-r border border-gray-600 dark:bg-gray-700 dark:border-gray-500 dark:text-white hover:bg-gray-800 hover:dark:bg-gray-800 hover:dark:border-gray-800">
             Search
           </button>
         </form>
@@ -89,6 +89,7 @@ const TopBar = ({ onToggleTheme, isDarkMode }) => {
           <button
             onClick={onToggleTheme}
             className="ml-4 p-2 rounded-full bg-gray-300 dark:bg-gray-800"
+            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {isDarkMode ? (
               // Sun icon for light theme

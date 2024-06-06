@@ -1,12 +1,12 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 02/06/2024
+Last edit date: 06/06/2024
 Recipe category page to display recipes by category
 */
 
-// Import the Fragment component from React
-import { Fragment } from "react";
+// Import the Fragment, useState, and useEffect hooks from React
+import { Fragment, useState, useEffect } from "react";
 // Import PropTypes library for function argument validation
 import PropTypes from 'prop-types';
 // Import the Head component from Next.js for SEO
@@ -21,6 +21,8 @@ import apiRequest from '@/lib/apiRequest';
 import { useRouter } from 'next/router';
 // Import the categories data
 import categories from '@/data/categories.json';
+// Import Session from NextAuth for session management
+import { getSession } from 'next-auth/react';
 
 /**
  * RecipeCategory component to display recipes by category.
@@ -29,6 +31,8 @@ import categories from '@/data/categories.json';
  * @returns {JSX.Element}
  */
 const RecipeCategory = ({ recipes, pagination }) => {
+  // Create a state variable for the favorite recipe IDs
+  const [ favoriteIds, setFavoriteIds ] = useState([]);
   // Get the router object
   const router = useRouter();
   // Get the category slug from the router query
@@ -37,6 +41,42 @@ const RecipeCategory = ({ recipes, pagination }) => {
   const category = categories.find(cat => cat.slug === categoryslug);
   // Get the category title
   const categoryTitle = category ? category.name : 'Recipes';
+
+  // Fetch the user's favorite recipe IDs from the API on page load if the user is authenticated
+  useEffect(() => {
+    // Define an async function to fetch the user's favorite recipe IDs
+    const fetchFavorites = async () => {
+      // Get the session object
+      const session = await getSession();
+      // If the session is available, fetch the user's favorite recipe IDs
+      if (session) {
+        try {
+          // Fetch the user's favorite recipe IDs from the API
+          const favoriteResponse = await apiRequest(`recipes/favorites`, 'GET', {}, {});
+          // If the response is successful, set the favorite recipe IDs
+          if (favoriteResponse.success) {
+            // Set the favorite recipe IDs
+            setFavoriteIds(favoriteResponse.data);
+          } else {
+            // If the response is not successful, set the favorite recipe IDs to an empty array
+            setFavoriteIds([]);
+          }
+        } catch (error) {
+          // On error set the favorite recipe IDs to an empty array
+          setFavoriteIds([]);
+        }
+      }
+    };
+
+    // Call the fetchFavorites function on page load
+    fetchFavorites();
+  }, []);
+
+  // Map the recipes to include the favorite status
+  const recipesWithFavorite = recipes.map(recipe => ({
+    ...recipe, // Spread the recipe object
+    favorite: favoriteIds ? favoriteIds.includes(recipe._id) : false, // Set the favorite status based on the favorite recipe IDs
+  }));
 
   // Return the recipe category page view
   return (
@@ -55,7 +95,7 @@ const RecipeCategory = ({ recipes, pagination }) => {
           {/* Recipe table */}
           <RecipeTable
             title={`${categoryTitle} Recipes`}
-            recipes={recipes}
+            recipes={recipesWithFavorite}
             page={pagination.currentPage}
             totalPages={pagination.totalPages}
           />
@@ -71,7 +111,7 @@ RecipeCategory.propTypes = {
   pagination: PropTypes.object.isRequired, // Pagination object
 };
 
-// Server-side function to fetch the recipes data by category
+// Static function to fetch the recipes data
 export const getServerSideProps = async (context) => {
   // Get the category slug from the URL parameters
   const { categoryslug } = context.params;
@@ -90,10 +130,10 @@ export const getServerSideProps = async (context) => {
   // Init the recipes and pagination variables
   let recipes = [];
   let pagination = {};
-  // Init the data object with the category name and page number for the API
+  // Init the data object
   let data = {
-    type: category.name,
-    page,
+    type: category.name, // Set the category name
+    page, // Set the page number
   };
 
   try {

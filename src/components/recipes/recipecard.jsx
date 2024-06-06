@@ -1,20 +1,18 @@
 /*
-Version: 1.4
+Version: 1.5
 Last edited by: Natalia Pakhomova
-Last edit date: 02/06/2024
+Last edit date: 06/06/2024
 A recipe card component for displaying recipe details.
 */
 
-// Import the Fragment component from React
-import { Fragment } from 'react';
+// Import the Fragment component and useState, useEffect hooks from React
+import { Fragment, useState, useEffect } from 'react';
 // Import PropTypes library for function argument validation
 import PropTypes from 'prop-types';
 // Import the Image component from Next.js for image optimization
 import Image from 'next/image';
 // Import the Link component from Next.js for client-side navigation
 import Link from 'next/link';
-// Import the useState hook from React
-import { useState } from 'react';
 // Import the useSession hook from NextAuth for session management
 import { useSession } from 'next-auth/react';
 // Import the useToast hook from the ToastContext for displaying notifications
@@ -61,6 +59,12 @@ const RecipeCard = ({ recipe }) => {
   const STORAGE_METHOD = process.env.NEXT_PUBLIC_STORAGE_METHOD;
   // Define the S3 bucket URL for photo storage from environment variables
   const s3BucketUrl = process.env.NEXT_PUBLIC_S3_BUCKET_URL; 
+
+  // Update the favorite status when the recipe changes
+  useEffect(() => {
+    // Update the favorite status based on the recipe object
+    setIsFavourite(recipe.favorite);
+  }, [recipe.favorite]); // Update the favorite status on recipe change
 
   // Function to get the photo URL based on the storage method
   const getPhotoUrl = () => {

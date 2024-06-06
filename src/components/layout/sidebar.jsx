@@ -1,7 +1,7 @@
 /*
-Version: 1.1
+Version: 1.2
 Last edited by: Natalia Pakhomova
-Last edit date: 02/06/2024
+Last edit date: 06/06/2024
 A sidebar component for displaying the application navigation menu.
 */
 
@@ -54,11 +54,11 @@ function Sidebar({ items, isMobile }) {
           {/* Logo block */}
           <div className="p-4 pb-2 flex justify-between items-center">
             {/* Logo image with link to home */}
-            <Link href="/" passHref>
+            <Link href="/" passHref title="Recipe Book">
               <Logo className="w-48" />
             </Link>
             {/* Menu toggle mobile button */}
-            <button onClick={toggleSidebar} className={`z-20 ${isMobile ? '' : 'hidden'}`}>
+            <button onClick={toggleSidebar} className={`z-20 ${isMobile ? '' : 'hidden'}`} title="Site Menu">
               <LuMenuSquare style={{ fontSize: '2em' }} />
             </button>
           </div>
