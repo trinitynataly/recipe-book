@@ -148,6 +148,7 @@ const RecipeCard = ({ recipe }) => {
               objectFit="cover"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
               quality={75}
+              priority={true}
             />
           </div>
         </Link>
