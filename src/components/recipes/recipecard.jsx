@@ -160,6 +160,7 @@ const RecipeCard = ({ recipe }) => {
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
               quality={75}
               onLoad={handleImageLoad}
+              priority={true}
             />
           </div>
         </Link>
