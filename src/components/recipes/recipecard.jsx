@@ -137,7 +137,7 @@ const RecipeCard = ({ recipe }) => {
       {/* Recipe card with photo, title, description, and type */}
       <div className="border dark:border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
         {/* Recipe photo with Link */}
-        <Link href={recipeUrl} className="block relative w-full h-64 overflow-hidden">
+        <Link href={recipeUrl} className="block relative w-full h-48 overflow-hidden">
           <div className="flex items-center justify-center h-full">
             <Image
               src={getPhotoUrl()}
