@@ -24,9 +24,6 @@ import apiRequest from '@/lib/apiRequest';
 // Import the data for the recipe categories
 import categories from "@/data/categories.json";
 
-// Define the number of recipes per page
-const RECIPES_PER_PAGE = 12;
-
 /**
  * Home component to display the home page with a list of recipes.
  * @param {array} recipes - the list of recipes
@@ -47,7 +44,7 @@ const Home = ({ recipes }) => {
       if (session) {
         try {
           // Fetch the user's favorite recipe IDs from the API
-          const favoriteResponse = await apiRequest(`recipes/favorites`, 'GET', {}, {});
+          const favoriteResponse = await apiRequest(`recipes/favorites`, 'GET');
           // If the response is successful, set the favorite recipe IDs
           if (favoriteResponse.success) {
             // Set the favorite recipe IDs
@@ -106,21 +103,12 @@ Home.propTypes = {
 
 // Static function to fetch the recipes data
 export const getStaticProps = async (context) => {
-  // Get the page number from the URL query parameters (default to 1)
-  const { page = 1 } = context.params || {};
-  // Parse the page number as an integer
-  const pageInt = parseInt(page, 10);
-  // Set the number of recipes per page
-  const perPageInt = 6; // Set the number of recipes per page as needed
-
-  // Init the recipes and pagination variables
   let recipes = [];
-  let pagination = {};
-
+  
   // Init the data object
   let data = {
-    page: pageInt, // Set the page number
-    per_page: perPageInt, // Set the number of recipes per page
+    page: 1, // Set the page number
+    per_page: 6, // Set the number of recipes per page
   };
 
   try {
