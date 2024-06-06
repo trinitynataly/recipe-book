@@ -158,7 +158,7 @@ const RecipeCard = ({ recipe }) => {
               height={360}
               objectFit="cover"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-              quality={75}
+              quality={50}
               onLoad={handleImageLoad}
               priority={true}
             />
