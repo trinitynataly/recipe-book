@@ -137,16 +137,20 @@ const RecipeCard = ({ recipe }) => {
       {/* Recipe card with photo, title, description, and type */}
       <div className="border dark:border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
         {/* Recipe photo with Link */}
-        <Link href={recipeUrl} className="block w-full h-48 relative">
-          <Image
-            src={getPhotoUrl()}
-            alt={recipe.title}
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-            priority={false}
-            quality={75}
-          />
+        <Link href={recipeUrl} className="block relative w-full h-64 overflow-hidden">
+          <div className="flex items-center justify-center h-full">
+            <Image
+              src={getPhotoUrl()}
+              alt={recipe.title}
+              layout="responsive"
+              width={640}
+              height={360}
+              objectFit="cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+              priority={false}
+              quality={75}
+            />
+          </div>
         </Link>
         {/* Action buttons for photo upload, edit, and favorite */}
         <div className="absolute top-2 right-2 flex space-x-2">
