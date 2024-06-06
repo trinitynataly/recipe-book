@@ -60,6 +60,12 @@ const RecipeCard = ({ recipe }) => {
   // Define the S3 bucket URL for photo storage from environment variables
   const s3BucketUrl = process.env.NEXT_PUBLIC_S3_BUCKET_URL; 
 
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
   // Update the favorite status when the recipe changes
   useEffect(() => {
     // Update the favorite status based on the recipe object
@@ -139,6 +145,11 @@ const RecipeCard = ({ recipe }) => {
         {/* Recipe photo with Link */}
         <Link href={recipeUrl} className="block relative w-full h-48 overflow-hidden">
           <div className="flex items-center justify-center h-full">
+          {!imageLoaded && (
+            <div className="skeleton-loader absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+              {/* Placeholder content */}
+            </div>
+          )}
             <Image
               src={getPhotoUrl()}
               alt={recipe.title}
@@ -148,6 +159,7 @@ const RecipeCard = ({ recipe }) => {
               objectFit="cover"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
               quality={75}
+              onLoad={handleImageLoad}
             />
           </div>
         </Link>
